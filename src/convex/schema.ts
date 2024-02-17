@@ -21,5 +21,6 @@ export default defineSchema({
   apiResponses: defineTable({
     response: v.string(),
     botID: v.string(),
+    function: v.string()
   }),
 });
