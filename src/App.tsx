@@ -10,17 +10,17 @@ import Settings from "./pages/Settings";
 
 import "./App.css";
 
-function App() {
-  const ScrollToTop = () => {
-    const { pathname } = useLocation();
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
 
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-    return null;
-  };
+  return null;
+};
 
+const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
