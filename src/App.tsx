@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import React, { useEffect } from "react";
 
 import Recipes from "./pages/Recipes";
-import Login from "./pages/Login.tsx";
+import Login from "./pages/Login";
 import Chat from "./pages/Chat";
 import Friends from "./pages/Friends";
 import Events from "./pages/Events";
@@ -10,17 +10,17 @@ import Settings from "./pages/Settings";
 
 import "./App.css";
 
-function App() {
-  const ScrollToTop = () => {
-    const { pathname } = useLocation();
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
 
-    useEffect(() => {
-      window.scrollTo(0, 0);
-    }, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-    return null;
-  };
+  return null;
+};
 
+const App: React.FC = () => {
   return (
     <Router>
       <ScrollToTop />
