@@ -1,29 +1,29 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import React, { useEffect } from "react";
 
-import Recipes from './pages/Recipes';
-import Login from './pages/Login';
-import Chat from './pages/Chat';
-import Friends from './pages/Friends';
-import Events from './pages/Events';
-import Settings from './pages/Settings';
+import Recipes from "./pages/Recipes";
+import Login from "./pages/Login";
+import Chat from "./pages/Chat";
+import Friends from "./pages/Friends";
+import Events from "./pages/Events";
+import Settings from "./pages/Settings";
 
-import './App.css';
+import "./App.css";
 
 function App() {
   const ScrollToTop = () => {
     const { pathname } = useLocation();
-  
+
     useEffect(() => {
       window.scrollTo(0, 0);
     }, [pathname]);
-  
-    return null; 
+
+    return null;
   };
 
   return (
     <Router>
-      <ScrollToTop /> 
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Recipes />} />
         <Route path="/login" element={<Login />} />
