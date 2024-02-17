@@ -4,7 +4,7 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import { Authenticated, AuthLoading, ConvexReactClient, Unauthenticated } from "convex/react";
 import { ConvexProviderWithAuth0 } from "convex/react-auth0";
 import App from "./App";
-import Login from "./pages/Login";
+import Login from "./pages/Login.tsx";
 
 import reportWebVitals from "./reportWebVitals";
 

@@ -1,8 +1,11 @@
 import React from 'react';
+import Template from '../components/Template';
 
 const Chat = () => {
   return (
-    <div></div>
+    <Template>
+      <div>hi</div>
+    </Template>
   );
 };
 

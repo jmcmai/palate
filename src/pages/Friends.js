@@ -1,8 +1,11 @@
 import React from 'react';
+import Template from '../components/Template';
 
 const Friends = () => {
   return (
-    <div>Hi</div>
+    <Template>
+      <div>hi</div>
+    </Template>
   );
 };
 

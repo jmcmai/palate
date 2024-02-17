@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import React, { useEffect } from "react";
 
 import Recipes from "./pages/Recipes";
-import Login from "./pages/Login";
+import Login from "./pages/Login.tsx";
 import Chat from "./pages/Chat";
 import Friends from "./pages/Friends";
 import Events from "./pages/Events";
