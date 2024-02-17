@@ -1,8 +1,13 @@
-import React from 'react';
+import LoginButton from "../components/LoginButton";
 
 const Login = () => {
   return (
-    <div></div>
+    <main>
+      <h1>Palate</h1>
+      <h2>
+        <LoginButton />
+      </h2>
+    </main>
   );
 };
 
