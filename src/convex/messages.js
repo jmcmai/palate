@@ -1,8 +1,6 @@
-import { query, mutation } from "./_generated/server";
-import { api } from "../convex/_generated/api";
+import { query, mutation, internalMutation } from "./_generated/server";
+import { internal } from "../convex/_generated/api";
 import { v } from "convex/values";
-
-const testUserId = "abc123";
 
 export const listUsersChatHistory = query({
   args: { userID: v.string() },
@@ -18,10 +16,13 @@ export const listUsersChatHistory = query({
   },
 });
 
-export const addChatToDB = mutation({
+export const saveAndSendUserMessage = mutation({
   args: { userID: v.string(), body: v.string() },
   handler: async (ctx, args) => {
-    // Send a new message.
+    // Save a new message.
     await ctx.db.insert("messages", { userID: args.userID, body: args.body });
+
+    // send user message to cb
+    await ctx.scheduler.runAfter(0, internal.together.requestRecipeFC, { messageBody: args.body });
   },
 });

@@ -1,7 +1,6 @@
-"use node";
 import OpenAI from "openai";
-import { action } from "./_generated/server";
-import { api } from "./_generated/api";
+import { action, internalMutation } from "./_generated/server";
+import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
 
 // Initialize the OpenAI client with the given API key
@@ -89,7 +88,14 @@ export const requestRecipeFC = action({
     });
 
     // Pull the message content out of the response
-    console.log(completion.choices[0].message);
+    const response = completion.choices[0].message;
+    console.log(response);
+
+    // add message to the db
+    await ctx.runMutation(internal.together.saveChatbotMessage, {
+      botID: "Ramsey",
+      response: JSON.stringify(response) || "No Answer",
+    });
 
     // check function name 
 
@@ -97,5 +103,14 @@ export const requestRecipeFC = action({
 
     // if recipe request --> go to tavily
   }
-})
+});
+
+export const saveChatbotMessage = internalMutation ({
+  args: { botID: v.string(), response: v.string() },
+  handler: async (ctx, args) => {
+    // Save a new message.
+    await ctx.db.insert("apiResponses", { botID: args.botID, response: args.response });
+
+  },
+});
 
