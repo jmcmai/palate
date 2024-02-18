@@ -17,11 +17,18 @@ export const list = query({
 });
 
 export const send = mutation({
-  args: { userID: v.string(), body: v.string() },
+  args: { userID: v.string(), message: v.string() },
   handler: async (ctx, args) => {
     // Save a new message.
-    const userMessageID = await ctx.db.insert("messages", { userID: args.userID, body: args.body });
-    console.log(userMessageID);
-    return userMessageID;
+    await ctx.db.insert("messages", {
+      userID: args.userID,
+      message: args.message,
+    });
+    
+    // schedule chatbot to respond after insert
+    await ctx.scheduler.runAfter(0, internal.together.answer, {
+      userID: args.userID,
+      body: args.body
+    })
   },
 });
