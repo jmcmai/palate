@@ -3,7 +3,7 @@ from openai import OpenAI
 import os
 import pandas as pd
 
-TOGETHER_API_KEY = "c2a2af19900ad8578ad0e3f5785e25dfc1ef114d30ef301ce6ec3f5cf3d8e4ca"
+TOGETHER_API_KEY = ""
 
 SYSTEM_PROMPT="""
 You are an expert on the origins of food.
