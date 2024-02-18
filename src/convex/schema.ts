@@ -44,7 +44,7 @@ export default defineSchema({
     liked: v.number(),
     image: v.string(),
     ingredients: v.array(v.string()),
-    totalTime: v.number(),
+    totalTime: v.string(),
     url: v.string()
   })
   .index("byLiked", ["liked"])

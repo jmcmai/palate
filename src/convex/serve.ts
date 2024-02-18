@@ -48,14 +48,22 @@ export const answer = action({
 
         // recipe scraper
         const recipes = await ctx.runAction(api.recipeRetrievers.scrapeRecipes, { recipeURLs: recipeURLs });
-        const r = recipes[0]
-        const recipeJSON = JSON.parse(r);
-        console.log(recipeJSON);
+        const r : any = JSON.parse(recipes[0]);
 
         // add recipe to user's recipe book.
+        const recipeId = await ctx.runMutation(api.recipes.addRecipe, {
+          name: r.name,
+          ingredients: r.ingredients,
+          totalTime: r.time.total,
+          liked: 0,
+          image: r.image,
+          url: r.url,
+        });
+
+        await ctx.runMutation(api.users.addRecipe, { recipeId: recipeId });
 
         // run action to get response using AI
-        const message : any = await ctx.runAction(api.together.respond, { userID: args.userID, recipe: recipeJSON });
+        const message : any = await ctx.runAction(api.together.respond, { userID: args.userID, recipe: r });
         console.log(message);
         answer = message.content;
       } else {
