@@ -1,0 +1,39 @@
+.event-form {
+  width: 350px;
+  margin: 15px;
+  padding: 20px;
+  border: 2px solid #cccccc;
+  border-radius: 10px; /* Adjust the border-radius for the desired bevel effect */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for depth */
+  background-color: #a9b8f3;
+}
+
+.event-form h2 {
+  margin-bottom: 20px;
+}
+
+.event-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.event-form input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.event-form button {
+  background-color: #6ca8e3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.event-form button:hover {
+  background-color: #0056b3;
+}
