@@ -2,10 +2,8 @@ import OpenAI from "openai";
 import {
   action,
   internalAction,
-  mutation,
-  internalQuery,
 } from "./_generated/server";
-import { api, internal } from "./_generated/api";
+import { api } from "./_generated/api";
 import { v } from "convex/values";
 
 const tools = [
