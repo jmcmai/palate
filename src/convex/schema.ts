@@ -42,10 +42,10 @@ export default defineSchema({
   recipes: defineTable ({
     name: v.string(),
     liked: v.number(),
-    image: v.string(),
-    ingredients: v.array(v.string()),
-    totalTime: v.string(),
-    url: v.string()
+    image: v.optional(v.string()),
+    ingredients: v.optional(v.array(v.string())),
+    totalTime: v.optional(v.string()),
+    url: v.optional(v.string())
   })
   .index("byLiked", ["liked"])
 });
