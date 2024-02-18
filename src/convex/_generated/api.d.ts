@@ -17,7 +17,8 @@ import type {
 import type * as dishes from "../dishes.js";
 import type * as events from "../events.js";
 import type * as messages from "../messages.js";
-import type * as tavily from "../tavily.js";
+import type * as recipeRetrievers from "../recipeRetrievers.js";
+import type * as serve from "../serve.js";
 import type * as together from "../together.js";
 import type * as users from "../users.js";
 
@@ -33,7 +34,8 @@ declare const fullApi: ApiFromModules<{
   dishes: typeof dishes;
   events: typeof events;
   messages: typeof messages;
-  tavily: typeof tavily;
+  recipeRetrievers: typeof recipeRetrievers;
+  serve: typeof serve;
   together: typeof together;
   users: typeof users;
 }>;

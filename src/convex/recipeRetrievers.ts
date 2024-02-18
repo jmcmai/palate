@@ -1,15 +1,10 @@
+"use node"
 import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
-import { action } from "./_generated/server";
+import { action, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 
-const retriever = new TavilySearchAPIRetriever({
-  apiKey: process.env.TAVILY_API_KEY,
-  k: 20,
-});
-
-const includedDomains = [
+const includedDomains : string[] = [
   "https://www.101cookbooks.com/",
-  "https://www.allrecipes.com/",
   "https://www.ambitiouskitchen.com/",
   "https://www.averiecooks.com/",
   "https://www.bbc.co.uk/",
@@ -53,18 +48,48 @@ const includedDomains = [
   "https://www.jamieoliver.com/"
 ]
 
+const retriever = new TavilySearchAPIRetriever({
+  apiKey: process.env.TAVILY_API_KEY,
+  k: 20,
+  // includeDomains: includedDomains
+});
+
 export const retrieveSearch = action({
   args: {
     searchParam: v.string()
   },
   handler: async (ctx, args) => {
-    const retrievedSearchDocs = await retriever.getRelevantDocuments( args.searchParam, { includeDomains: includedDomains });
+    const retrievedSearchDocs = await retriever.getRelevantDocuments( args.searchParam );
 
-    // console.log({ retrievedSearchDocs });
-    const recipeURLs = [];
+    let recipeURLs : string[]  = [];
     retrievedSearchDocs.forEach((result) => {
+      console.log(result.metadata.source);
       recipeURLs.push(result.metadata.source);
     });
     return recipeURLs;
+  },
+});
+
+
+// recipe scraper
+const recipeScraper = require("recipe-scraper");
+
+export const scrapeRecipes = action ({
+  args: {
+    recipeURLs: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let recipes: string[] = [];
+    for ( let i = 0 ; i < args.recipeURLs.length; i++ ) {
+      try {
+        let rawRecipe = await recipeScraper(args.recipeURLs[i]);
+        rawRecipe["URL"] = args.recipeURLs[i];
+        let recipe = JSON.stringify(rawRecipe);
+        recipes.push(recipe);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    return recipes;
   },
 });
