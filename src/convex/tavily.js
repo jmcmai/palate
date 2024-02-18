@@ -3,10 +3,10 @@ import { action } from "./_generated/server";
 import { v } from "convex/values";
 
 
-const retriever = new TavilySearchAPIRetriever({
-  apiKey: process.env.TAVILY_API_KEY,
-  k: 20,
-});
+// const retriever = new TavilySearchAPIRetriever({
+//   apiKey: process.env.TAVILY_API_KEY,
+//   k: 20,
+// });
 
 const includedDomains = [
   "https://www.101cookbooks.com/",
