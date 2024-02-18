@@ -459,6 +459,94 @@ export const removeEvents = mutation({
 });
 
 
+export const getRecipes = query({
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    return Promise.all(
+    (user.recipes ?? []).map((recipeId) => ctx.db.get(recipeId))
+    );
+  },
+});
+
+
+
+export const addRecipe = mutation({
+  args: { recipeId: v.id("recipes") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedRecipes = user.recipes;
+    if (!updatedRecipes.includes(args.recipeId)) {
+      updatedRecipes.push(args.recipeId);
+      await ctx.db.patch(user._id, { recipes: updatedRecipes });
+    }
+
+    return true;
+  },
+});
+
+
+export const removeRecipe = mutation({
+  args: { recipeId: v.id("recipes") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedRecipes = user.recipes;
+
+    const index = updatedRecipes.indexOf(args.recipeId);
+    if (index !== -1) {
+      updatedRecipes.splice(index, 1);
+      await ctx.db.patch(user._id, { recipes: updatedRecipes });
+    }
+
+    return true;
+  },
+});
+
+
 export const addMessage = mutation({
   args: { id: v.id("users"), role: v.string(), content: v.string() },
   handler: async (ctx, args) => {

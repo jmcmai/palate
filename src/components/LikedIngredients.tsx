@@ -7,16 +7,16 @@ import LikedIngredientItem from './LikedIngredientItem';
 const LikedIngredients: React.FC = () => {
   const addLikedIngredient = useMutation(api.users.addLikedIngredient);
 
-  const [ingredient, setIngredient] = useState<string>(''); // State to hold the ingredient input
+  const [ingredient, setIngredient] = useState<string>('');
   const user = useQuery(api.users.retrieveUserData);
-  let userLikedIngredients: string[] = []
+  let userlikedIngredients: string[] = []
   if (user){
-    userLikedIngredients = user.likedIngredients;
+    userlikedIngredients = user.likedIngredients;
   }
 
   const handleAddLikedIngredient = async () => {
     console.log(user);
-    console.log(userLikedIngredients);
+    console.log(userlikedIngredients);
     try {
       const trimmedIngredient = ingredient.trim();
       if (!trimmedIngredient) return; 
@@ -35,10 +35,10 @@ const LikedIngredients: React.FC = () => {
   };
 
   return (
-    <div className="ingredients-box content-body">
-        <h3>Liked Ingredients</h3>
+    <div className="ingredients-box">
+        <h3>🤤 Liked Ingredients</h3>
         <div className="ingredients-list">
-            {userLikedIngredients.map((ingredient, index) => (
+            {userlikedIngredients.map((ingredient, index) => (
                 <LikedIngredientItem key={index} name={ingredient} />
             ))}
         </div>
@@ -62,3 +62,4 @@ const LikedIngredients: React.FC = () => {
 };
 
 export default LikedIngredients;
+

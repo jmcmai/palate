@@ -35,8 +35,8 @@ const LikedIngredients: React.FC = () => {
   };
 
   return (
-    <div className="ingredients-box content-body">
-        <h3>Disliked Ingredients</h3>
+    <div className="ingredients-box">
+        <h3>🤮 Disliked Ingredients</h3>
         <div className="ingredients-list">
             {userDislikedIngredients.map((ingredient, index) => (
                 <DislikedIngredientItem key={index} name={ingredient} />

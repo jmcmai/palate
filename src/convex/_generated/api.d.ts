@@ -20,6 +20,7 @@ import type * as messages from "../messages.js";
 import type * as recipeRetrievers from "../recipeRetrievers.js";
 import type * as recipes from "../recipes.js";
 import type * as serve from "../serve.js";
+import type * as tavily from "../tavily.js";
 import type * as together from "../together.js";
 import type * as users from "../users.js";
 
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   recipeRetrievers: typeof recipeRetrievers;
   recipes: typeof recipes;
   serve: typeof serve;
+  tavily: typeof tavily;
   together: typeof together;
   users: typeof users;
 }>;

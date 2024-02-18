@@ -13,13 +13,13 @@ h2, h3, p, nav ul li a, b {
 
 h1 {
   font-family: "Bebas Neue", sans-serif;
-  letter-spacing: 6px;
+  letter-spacing: 1px;
   color: #212427;
-  font-size: calc(20px + 1.5vw);
+  font-size: calc(20px + 1vw);
 }
 
 h2 {
-  font-size: calc(18px + 1vw);
+  font-size: calc(18px + 0.6vw);
 }
 
 h3 {
@@ -27,7 +27,11 @@ h3 {
 }
 
 p {
-  font-size: calc(12px + 0.6vw);
+  font-size: calc(12px + 0.4vw);
+}
+
+.small-text {
+  font-size: calc(10px + 0.4vw);
 }
 
 .small-margin {
