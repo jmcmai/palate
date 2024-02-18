@@ -1,6 +1,6 @@
 "use node"
 import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
-import { action, internalAction } from "./_generated/server";
+import { action } from "./_generated/server";
 import { v } from "convex/values";
 
 const includedDomains : string[] = [

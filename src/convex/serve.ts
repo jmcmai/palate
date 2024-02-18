@@ -57,7 +57,7 @@ export const answer = action({
           totalTime: r.time.total,
           liked: 0,
           image: r.image,
-          url: r.url,
+          url: r.URL,
         });
 
         await ctx.runMutation(api.users.addPinned, { recipeId: recipeId });
