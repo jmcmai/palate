@@ -15,8 +15,6 @@ const LikedIngredients: React.FC = () => {
   }
 
   const handleAddRestriction = async () => {
-    console.log(user);
-    console.log(userDietaryRestriction);
     try {
       const trimmedIngredient = ingredient.trim();
       if (!trimmedIngredient) return; 

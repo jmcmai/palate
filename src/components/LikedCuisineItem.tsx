@@ -18,7 +18,7 @@ const LikedCuisineItem: React.FC<LikedCuisineItemProps> = ({ name }) => {
 
     const handleDeleteLikedCuisine = async () => {
         try {
-            const result = await deleteLikedCuisineItem({ Cuisine: name });
+            const result = await deleteLikedCuisineItem({ cuisine: name });
 
             if (result) {
                 console.log("Cuisine deleted successfully:", name);
@@ -32,7 +32,7 @@ const LikedCuisineItem: React.FC<LikedCuisineItemProps> = ({ name }) => {
 
     return (
         <div 
-        className="Cuisine-item" 
+        className="ingredient-item" 
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
     >

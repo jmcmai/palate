@@ -15,8 +15,6 @@ const LikedIngredients: React.FC = () => {
   }
 
   const handleAddLikedIngredient = async () => {
-    console.log(user);
-    console.log(userlikedIngredients);
     try {
       const trimmedIngredient = ingredient.trim();
       if (!trimmedIngredient) return; 

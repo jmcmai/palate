@@ -3,7 +3,7 @@
     border: 1px solid rgba(35, 35, 27, 0.5);
     height: auto;
     width: fit-content;
-    padding: 30px;
+    padding: 50px;
 }
 
 .ingredients-list {
@@ -116,4 +116,111 @@
     flex-wrap: wrap;
     gap: 1vw;
     justify-content: center;
+    align-self: center;
+  }
+
+  .recipe-item {
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+    background-size: cover;
+    height: 250px;
+    width: 250px;
+    background-image: linear-gradient(to top, rgba(0,0,0,0.9) 50%, transparent 100%);
+    background-position: center bottom;
+    display: flex;
+  }
+
+  .recipe-item p {
+    align-self: flex-end;
+    margin: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* Align text as needed */
+    align-self: flex-end;
+    margin: 10px;
+  }
+
+  .white-text {
+    color: #f4f8ff;
+  }
+
+  .recipe-item:hover {
+    box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .modal img {
+    max-width: 300px;
+    width: 100%;
+    display: block;
+    margin: auto;
+    border-radius: 50px;
+  }
+  
+  .recipe-title {
+    padding-bottom: 25px;
+    border-bottom: 1px black solid;
+  }
+
+  .modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; 
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    margin-top: 10vh;
+    padding: 20px;
+    padding-bottom: 50px;
+    border: 1px solid #888;
+    width: 30%;
+    border-radius: 5px;
+    position: relative;
+  }
+  
+  .modal-content .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .modal-content .close:hover,
+  .modal-content .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .recipes-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+
+  .thumbs {
+    font-size: 30px;
+  }
+
+  .thumbs-up {
+    color: green;
+  }
+
+  .thumbs-down {
+    color: red;
   }

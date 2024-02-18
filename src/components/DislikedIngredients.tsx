@@ -4,7 +4,7 @@ import { api } from "../convex/_generated/api";
 
 import DislikedIngredientItem from './DislikedIngredientItem';
 
-const LikedIngredients: React.FC = () => {
+const DislikedIngredients: React.FC = () => {
   const addLikedIngredient = useMutation(api.users.addDislikedIngredient);
 
   const [ingredient, setIngredient] = useState<string>('');
@@ -15,8 +15,6 @@ const LikedIngredients: React.FC = () => {
   }
 
   const handleAddLikedIngredient = async () => {
-    console.log(user);
-    console.log(userDislikedIngredients);
     try {
       const trimmedIngredient = ingredient.trim();
       if (!trimmedIngredient) return; 
@@ -61,4 +59,4 @@ const LikedIngredients: React.FC = () => {
   );
 };
 
-export default LikedIngredients;
+export default DislikedIngredients;
