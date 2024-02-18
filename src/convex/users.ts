@@ -1,5 +1,4 @@
-import { mutation } from "./_generated/server";
-import { action, query } from "./_generated/server";
+import { action, query, mutation } from "./_generated/server";
 import { internal } from "../convex/_generated/api";
 import { v } from "convex/values";
 
@@ -64,7 +63,8 @@ export const getUser = query({
 });
 
 
-export const retrieveUserData = mutation({
+export const retrieveUserData = query({
+  args: { field: v.string() },
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -82,7 +82,7 @@ export const retrieveUserData = mutation({
       return false;
     }
 
-    return user._id;
+    return user;
   },
 });
 
