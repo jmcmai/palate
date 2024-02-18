@@ -210,9 +210,9 @@ export const syncPalate = action({
           const searchQuery = dishes[i] + " recipe";
           const urls = await ctx.runAction(api.recipeRetrievers.retrieveSearch, {searchParam: searchQuery});
           const scrapedRecipes = await ctx.runAction(api.recipeRetrievers.scrapeRecipes, {recipeURLs: urls});
-          
           if (scrapedRecipes.length !== 0) {
             const recipe: Recipe = JSON.parse(scrapedRecipes[0]);
+            console.log(recipe);
             const recipeId = await ctx.runMutation(api.recipes.addRecipe, {name: recipe.name, liked: 0, image: recipe.image, ingredients: recipe.ingredients, totalTime: recipe.time.total, url: recipe.URL});
             recipes.push(recipeId);
           }
