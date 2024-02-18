@@ -47,7 +47,7 @@ export const store = mutation({
       events: [],
       recipes: [],
       pinned: [],
-      messageHistory: [{ content: "You are an assistant that loves cooking and can access external functions. " + 
+      messageHistory: [{ content: "You are a helpful assistant that can access external functions. " + 
       "The responses from these function calls will be appended to this dialogue. " +
       "Please provide responses based on the information from these function calls. Do not make new information up.", role: "system" }]
     });
@@ -587,4 +587,47 @@ export const addMessage = mutation({
     return true;
   },
 });
+
+
+export const deleteMessageHistory = mutation({
+  args: { id: v.id("users") },
+  handler: async (ctx, args) => {
+    /*
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+    */
+
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    await ctx.db.patch(id, { 
+      messageHistory : 
+      [
+        { 
+          content: "You are a helpful assistant that can access external functions. The responses from these function calls will be appended to this dialogue. Please provide responses based on the information from these function calls. Do not make new information up.", 
+          role: "system" 
+        }
+      ]
+    });
+    return true;
+  }
+});
+
 

@@ -14,7 +14,7 @@ export const getRecipe = query({
 
 export const addRecipe = mutation({
     args: { name: v.string(), liked: v.number(), image: v.string(),
-         ingredients: v.array(v.string()), totalTime: v.number(), url: v.string()},
+         ingredients: v.array(v.string()), totalTime: v.string(), url: v.string()},
     handler: async (ctx, args) => {
     const recipeId = await ctx.db.insert("recipes", { name: args.name,
         liked: args.liked,
