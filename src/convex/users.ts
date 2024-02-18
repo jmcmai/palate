@@ -1,7 +1,7 @@
-import { mutation } from "./_generated/server";
-import { action, query } from "./_generated/server";
+import { action, query, mutation } from "./_generated/server";
 import { internal } from "../convex/_generated/api";
 import { v } from "convex/values";
+
 
 /**
  * Insert or update the user in a Convex table then return the document's ID.
@@ -59,6 +59,29 @@ export const getUser = query({
   handler: async (ctx) => {
     const user = await ctx.db.query("users").collect();
     return user[0];
+  },
+});
+
+
+export const retrieveUserData = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    return user;
   },
 });
 
