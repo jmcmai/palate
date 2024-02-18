@@ -9,7 +9,7 @@ export default defineSchema({
     liked_ingredients: v.array(v.string()),
     disliked_ingredients: v.array(v.string()),
     restrictions: v.array(v.string()),
-    events: v.array(v.string()),
+    events: v.array(v.id("events")),
     recipes: v.object({
       liked: v.array(v.string()),
       disliked: v.array(v.string()),
@@ -40,5 +40,9 @@ export default defineSchema({
   })
   .searchIndex("search_ingredients", {
     searchField: "ingredients",
-    filterFields: ["cuisine"], })
+    filterFields: ["cuisine"], }),
+  events: defineTable ({
+    name: v.string(),
+    friends: v.array(v.id("users"))
+  })
 });

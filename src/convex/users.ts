@@ -53,6 +53,7 @@ export const store = mutation({
   },
 });
 
+
 export const getUser = query({
   args: { id: v.id("users") },
   handler: async (ctx) => {
@@ -60,6 +61,7 @@ export const getUser = query({
     return user[0];
   },
 });
+
 
 export const addFriend = mutation({
   args: { id: v.id("users"), friend_id: v.id("users") },
@@ -80,6 +82,7 @@ export const addFriend = mutation({
     return true;
   },
 });
+
 
 export const removeFriend = mutation({
   args: { id: v.id("users"), friend_id: v.id("users") },
@@ -103,6 +106,7 @@ export const removeFriend = mutation({
   },
 });
 
+
 export const addLikedIngredient = mutation({
   args: { id: v.id("users"), ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -122,6 +126,7 @@ export const addLikedIngredient = mutation({
     return true;
   },
 });
+
 
 export const removeLikedIngredient = mutation({
   args: { id: v.id("users"), ingredient: v.string() },
@@ -145,6 +150,7 @@ export const removeLikedIngredient = mutation({
   },
 });
 
+
 export const addDislikedIngredient = mutation({
   args: { id: v.id("users"), ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -164,6 +170,7 @@ export const addDislikedIngredient = mutation({
     return true;
   },
 });
+
 
 export const removeDislikedIngredient = mutation({
   args: { id: v.id("users"), ingredient: v.string() },
@@ -187,6 +194,7 @@ export const removeDislikedIngredient = mutation({
   },
 });
 
+
 export const addRestriction = mutation({
   args: { id: v.id("users"), diet: v.string() },
   handler: async (ctx, args) => {
@@ -207,6 +215,7 @@ export const addRestriction = mutation({
   },
 });
 
+
 export const removeRestriction = mutation({
   args: { id: v.id("users"), diet: v.string() },
   handler: async (ctx, args) => {
@@ -223,6 +232,50 @@ export const removeRestriction = mutation({
     if (index !== -1) {
       updatedDiet.splice(index, 1);
       await ctx.db.patch(id, { restrictions: updatedDiet });
+    }
+
+    return true;
+  },
+});
+
+
+export const addEvent = mutation({
+  args: { id: v.id("users"), event_id: v.id("events") },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedEvents = user.events;
+    if (!updatedEvents.includes(args.event_id)) {
+      updatedEvents.push(args.event_id);
+      await ctx.db.patch(id, { events: updatedEvents });
+    }
+
+    return true;
+  },
+});
+
+
+export const removeEvents = mutation({
+  args: { id: v.id("users"), event_id: v.id("events") },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedEvents = user.events;
+
+    const index = updatedEvents.indexOf(args.event_id);
+    if (index !== -1) {
+      updatedEvents.splice(index, 1);
+      await ctx.db.patch(id, { events: updatedEvents });
     }
 
     return true;
