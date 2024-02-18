@@ -1,13 +1,7 @@
 import OpenAI from "openai";
-import { action, internalMutation } from "./_generated/server";
+import { internalAction, mutation, internalQuery } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
-
-// Initialize the OpenAI client with the given API key
-const apiKey = "55c328c405b04c4b9bcba78c492939fc11fe114009657329070d98a245555311";
-const baseURL = "https://api.together.xyz/v1";
-
-const openai = new OpenAI({ apiKey: apiKey, baseURL: baseURL });
 
 const tools = [
   {
@@ -24,84 +18,111 @@ const tools = [
           type: "array",
           description: "the requested ingredients for the recommended recipe",
         },
-        disliked_ingredients: {
-          type: "array",
-          description: "the ingredients to avoid for the recommended recipe",
-        },
+        "disliked_ingredients": {
+          "type": "array",
+          "description": "the ingredients to avoid for the recommended recipe"
+        }
       },
-    },
+      "required": ["requested_ingredients"]
+    }
   },
   {
-    name: "get_recipe_request",
-    description: "Extract the recipe the user wants from the request.",
-    parameters: {
-      type: "object",
-      properties: {
-        recipe_name: {
-          type: "string",
-          description: "The name of the requested dish.",
+    "name": "get_recipe_request",
+    "description": "Extract the recipe the user wants from the request.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "recipe_name": {
+          "type": "string",
+          "description": "The name of the requested recipe. Cannot be a ingredient."
         },
         requested_ingredients: {
           type: "array",
           description: "the requested ingredients for the recipe",
         },
-        disliked_ingredients: {
-          type: "array",
-          description: "the ingredients to avoid for the recipe",
-        },
+        "disliked_ingredients": {
+          "type": "array",
+          "description": "the ingredients to avoid for the recipe"
+        }
       },
-    },
-  },
+      "required": ["recipe_name"]
+    }
+  }
 ];
-
+// 
 /*
  * FUNCTIONS
  */
 
-// uses function calling to
-export const extractData = action({
+export const answer = internalAction({
   args: {
-    messageBody: v.string(),
+    userID: v.string(),
+    message: v.string()
   },
   handler: async (ctx, args) => {
-    const completion = await openai.chat.completions.create({
-      model: "togethercomputer/CodeLlama-34b-Instruct",
-      max_tokens: 1024,
-      functions: tools,
-      function_call: "auto",
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a helpful assistant that can access external functions. The responses from these function calls will be appended to this dialogue. Please provide responses based on the information from these function calls.",
-        },
-        {
-          role: "user",
-          content: args.messageBody,
-        },
-      ],
-    });
+    // extract json data from the user message
+    const data = await extractData( ctx, args );
 
-    // Pull the message content out of the response
-    const response = completion.choices[0].message.tool_calls[0];
-    const functionCalled = response.function.name;
-    // console.log(response);
-    // console.log(functionCalled);
+    if ( !data.content ) {
+        const response = data.tool_calls[0];
+        const functionCalled = response.function.name;
+    
+        // add message + function called to the db
+        const responseID = await ctx.runMutation(api.together.saveData, {
+          botID: "Ramsey",
+          response: JSON.stringify(response) || "Error: did not receive response.",
+          function: functionCalled
+        });
+        
+        if ( functionCalled === "get_recipe_request" ) {
+          console.log("specific recipe requested!");
+        } else if ( functionCalled === "get_recipe_recommendation_request") {
+          console.log("user wants to request a recommendation!");
+        }
+      
+      } else {
+        // add message + function called to the db
+        await ctx.runMutation(api.together.saveData, {
+          botID: "Ramsey",
+          response: data.content,
+          function: "None"
+        });
 
-    // add message + function called to the db
-    const responseID = await ctx.runMutation(internal.together.saveData, {
-      botID: "Ramsey",
-      response: JSON.stringify(response) || "Error: did not receive response.",
-      function: functionCalled,
-    });
-
-    // return chatbot response ID
-    return responseID;
-  },
+        console.log("here is the output: " + data.content);
+      }
+  }
 });
 
+// uses function calling to extract data
+async function extractData ( ctx, args ) {
+  const openai = new OpenAI({ apiKey: process.env.TOGETHER_API_KEY, baseURL: 'https://api.together.xyz/v1' });
+  const completion = await openai.chat.completions.create({
+    model: 'togethercomputer/CodeLlama-34b-Instruct',
+    max_tokens: 1024,
+    functions: tools,
+    function_call: 'auto',
+    messages: [
+      {
+        role: 'system',
+        content: "You are an assistant that loves cooking and can access external functions. " + 
+          "The responses from these function calls will be appended to this dialogue. " +
+          "Please provide responses based on the information from these function calls.",
+      },
+      {
+        role: 'user',
+        content: args.message
+      }
+    ],
+    response_format: { type: "json_object" }
+  });
+
+  // Extract the generated completion from the OpenAI API response
+  const completionResponse = completion.choices[0].message;
+  return completionResponse;
+}
+
 // Saves the chatbot's response from function calling into the database.
-export const saveData = internalMutation({
+export const saveData = mutation ({
   args: { botID: v.string(), function: v.string(), response: v.string() },
   handler: async (ctx, args) => {
     // Save Chatbot Function Calling JSON Data
@@ -111,4 +132,19 @@ export const saveData = internalMutation({
       response: args.response,
     });
   },
+});
+
+// grab apiResponse from DB
+export const getResponse = internalQuery({
+  args: {
+    _id: v.id("apiResponses")
+  },
+  handler: async (ctx, args) => {
+    const response = await ctx.db
+      .query("apiResponses")
+      .filter((q) => q.eq(q.field("_id") === args._id))
+      .collect();
+    
+    return response;
+  }
 });

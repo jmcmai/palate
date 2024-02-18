@@ -8,7 +8,7 @@ const LoginButton: React.FC = () => {
     loginWithRedirect();
   };
 
-  return <button onClick={handleLogin}>Log in</button>;
+  return <button className="log-in" onClick={handleLogin}>Get Started</button>;
 };
 
 export default LoginButton;

@@ -4,7 +4,6 @@ import React, { useEffect } from "react";
 import Recipes from "./pages/Recipes";
 import Login from "./pages/Login";
 import Chat from "./pages/Chat";
-import Friends from "./pages/Friends";
 import Events from "./pages/Events";
 import Settings from "./pages/Settings";
 
@@ -28,7 +27,6 @@ const App: React.FC = () => {
         <Route path="/" element={<Recipes />} />
         <Route path="/login" element={<Login />} />
         <Route path="/chat" element={<Chat />} />
-        <Route path="/friends" element={<Friends />} />
         <Route path="/events" element={<Events />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>

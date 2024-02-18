@@ -1,5 +1,5 @@
-import { action, query } from "./_generated/server";
-import { internal } from "../convex/_generated/api";
+import { action, query, internalQuery } from "./_generated/server";
+import { api, internal } from "../convex/_generated/api";
 import { v } from "convex/values";
 
 export const listDishes = query({
@@ -26,7 +26,7 @@ export const listDishes = query({
 });
 
 
-export const getIngredients = query({
+export const getIngredients = internalQuery({
   handler: async (ctx, args) => {
     const dishes = await ctx.db
     .query("dishes")
@@ -56,14 +56,14 @@ export const getIngredients = query({
 export const searchDishes = action({
   args: { ingredients: v.string(), dislikedIngredients: v.array(v.string()), cuisine: v.string() },
   handler: async (ctx, args) => {
-    const dishesQuery = await ctx.runQuery(internal.dishes.listDishes, {
+    const dishesQuery = await ctx.runQuery(api.dishes.listDishes, {
       ingredients: args.ingredients,
       cuisine: args.cuisine
     });
 
     let dishes: string[] = dishesQuery["dishes"];
     const ingredients: string[] = dishesQuery["ingredients"];
-    let dislikedIngredients =  await ctx.runAction(internal.dishes.matchedIngredients, {ingredients: args.dislikedIngredients});
+    let dislikedIngredients =  await ctx.runAction(api.dishes.matchedIngredients, {ingredients: args.dislikedIngredients});
 
     let dislikedDishes = new Set<string>();
   
@@ -87,7 +87,7 @@ export const matchedIngredients = action({
     ingredients: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    let allIngredients = await ctx.runQuery(internal.dishes.getIngredients);
+    let allIngredients = await ctx.runQuery(internal.dishes.getIngredients, {});
 
     let matchedIngredients: string[] = [];
     for (let i = 0; i < args.ingredients.length; i++) {
