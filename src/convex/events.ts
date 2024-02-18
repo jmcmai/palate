@@ -1,6 +1,8 @@
-import { mutation } from "./_generated/server";
+import { action, mutation } from "./_generated/server";
 import { query } from "./_generated/server";
+import { api, internal } from "../convex/_generated/api";
 import { v } from "convex/values";
+
 
 export const getEvent = query({
     args: { id: v.id("events") },

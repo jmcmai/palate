@@ -3,6 +3,7 @@ import { action, query } from "./_generated/server";
 import { internal } from "../convex/_generated/api";
 import { v } from "convex/values";
 
+
 /**
  * Insert or update the user in a Convex table then return the document's ID.
  *
@@ -81,7 +82,7 @@ export const retrieveUserData = mutation({
       return false;
     }
 
-    return user;
+    return user._id;
   },
 });
 

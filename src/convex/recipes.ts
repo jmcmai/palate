@@ -31,3 +31,19 @@ export const deleteRecipe = mutation({
       await ctx.db.delete(args.id);
     },
   });
+
+
+export const updateName = mutation({
+    args: { id: v.id("recipes"), name: v.string() },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, { name: args.name });
+    },
+});
+
+
+export const updateLiked = mutation({
+    args: { id: v.id("recipes"), liked: v.number() },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, { liked: args.liked });
+    },
+});
