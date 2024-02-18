@@ -38,4 +38,12 @@ export default defineSchema({
     botID: v.string(),
     function: v.string()
   }),
+  dishes: defineTable({
+    name: v.string(),
+    ingredients: v.string(),
+    cuisine: v.string()
+  })
+  .searchIndex("search_ingredients", {
+    searchField: "ingredients",
+    filterFields: ["cuisine"], })
 });
