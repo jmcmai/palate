@@ -14,8 +14,8 @@ export const send = action({
     });
     
     // schedule chatbot to respond after insert
-    await ctx.scheduler.runAfter(0, api.serve.answer, {
-      userID: args.userID
-    })
+    // await ctx.scheduler.runAfter(0, api.serve.answer, {
+    //   userID: args.userID
+    // })
   }
 });

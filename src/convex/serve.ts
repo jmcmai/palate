@@ -56,7 +56,7 @@ export const answer = action({
         // TODO: recipe checking ! until get one? loop.
 
         // run action to get response using AI
-        const message : any = await ctx.runAction(internal.together.respond, { userID: args.userID, recipe: recipeJSON });
+        const message : any = await ctx.runAction(api.together.respond, { userID: args.userID, recipe: recipeJSON });
         console.log(message);
         answer = message.content;
       } else {
