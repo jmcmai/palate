@@ -36,6 +36,16 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
+      friends: [],
+      liked_ingredients: [],
+      disliked_ingredients: [],
+      restrictions: [],
+      events: [],
+      recipes: {
+        liked: [],
+        disliked: [],
+      },
+      pinned: [],
     });
   },
 });
