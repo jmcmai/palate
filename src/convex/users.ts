@@ -251,7 +251,7 @@ export const addPantry = mutation({
     let updatedPantry = user.pantry;
     if (!updatedPantry.includes(args.ingredient)) {
       updatedPantry.push(args.ingredient);
-      await ctx.db.patch(user._id, { likedIngredients: updatedPantry });
+      await ctx.db.patch(user._id, { pantry: updatedPantry });
     }
 
     return true;

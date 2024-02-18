@@ -154,6 +154,16 @@ export const addRecommendations = mutation ({
   },
 })
 
+export const getRecommendation = query ({
+  args: { id: v.id("events") },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.id);
+    return Promise.all(
+      (event?.recipes ?? []).map((recipeId) => ctx.db.get(recipeId))
+    );
+  },
+})
+
 
 export const syncPalate = action({
     args: { id: v.id("events") },
@@ -200,12 +210,14 @@ export const syncPalate = action({
           const searchQuery = dishes[i] + " recipe";
           const urls = await ctx.runAction(api.recipeRetrievers.retrieveSearch, {searchParam: searchQuery});
           const scrapedRecipes = await ctx.runAction(api.recipeRetrievers.scrapeRecipes, {recipeURLs: urls});
-                    
+          
           if (scrapedRecipes.length !== 0) {
             const recipe: Recipe = JSON.parse(scrapedRecipes[0]);
             const recipeId = await ctx.runMutation(api.recipes.addRecipe, {name: recipe.name, liked: 0, image: recipe.image, ingredients: recipe.ingredients, totalTime: recipe.time.total, url: recipe.URL});
             recipes.push(recipeId);
           }
         }
+
+        await ctx.runMutation(api.events.addRecommendations, {id: args.id, recipes: recipes});
     },
 });
