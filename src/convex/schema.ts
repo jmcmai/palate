@@ -38,10 +38,16 @@ export default defineSchema({
   })
   .searchIndex("search_ingredients", {
     searchField: "ingredients",
-    filterFields: ["cuisine"], }),
+    filterFields: ["cuisine"], })
+  .searchIndex("search_dishes", {
+    searchField: "name",
+  }),
   events: defineTable ({
     name: v.string(),
-    friends: v.array(v.id("users"))
+    date: v.string(),
+    host: v.id("users"),
+    participants: v.array(v.id("users")),
+    userRecipe: v.array(v.object({user_id: v.id("user"), recipe_id: v.id("recipe")}))
   }),
   recipes: defineTable ({
     liked: v.boolean(),

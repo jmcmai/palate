@@ -312,7 +312,7 @@ export const removeRestriction = mutation({
 
 
 export const addEvent = mutation({
-  args: { event_id: v.id("events") },
+  args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -331,8 +331,8 @@ export const addEvent = mutation({
     }
 
     let updatedEvents = user.events;
-    if (!updatedEvents.includes(args.event_id)) {
-      updatedEvents.push(args.event_id);
+    if (!updatedEvents.includes(args.eventId)) {
+      updatedEvents.push(args.eventId);
       await ctx.db.patch(user._id, { events: updatedEvents });
     }
 
@@ -342,7 +342,7 @@ export const addEvent = mutation({
 
 
 export const removeEvents = mutation({
-  args: { event_id: v.id("events") },
+  args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -362,7 +362,7 @@ export const removeEvents = mutation({
 
     let updatedEvents = user.events;
 
-    const index = updatedEvents.indexOf(args.event_id);
+    const index = updatedEvents.indexOf(args.eventId);
     if (index !== -1) {
       updatedEvents.splice(index, 1);
       await ctx.db.patch(user._id, { events: updatedEvents });
@@ -413,3 +413,4 @@ export const addMessage = mutation({
     return true;
   },
 });
+
