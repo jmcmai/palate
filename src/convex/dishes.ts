@@ -112,7 +112,7 @@ export const matchedIngredients = action({
       }
     
       return distances[a.length][b.length];
-    }
+    };
 
     let allIngredients = await ctx.runQuery(internal.dishes.getIngredients);
 

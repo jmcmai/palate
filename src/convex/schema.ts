@@ -38,6 +38,10 @@ export default defineSchema({
     userRecipe: v.array(v.object({user_id: v.id("user"), recipe_id: v.id("recipe")}))
   }),
   recipes: defineTable ({
-    liked: v.boolean(),
+    name: v.string(),
+    liked: v.number(),
+    image: v.string(),
+    ingredients: v.array(v.string()),
+    totalTime: v.number()
   })
 });
