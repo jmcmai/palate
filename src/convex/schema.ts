@@ -2,20 +2,25 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  users: defineTable({
+  dishes: defineTable({
+    cuisine: v.string(),
+    ingredients: v.string(),
     name: v.string(),
-    tokenIdentifier: v.string(),
-    friends: v.array(v.string()),
-    liked_ingredients: v.array(v.string()),
-    disliked_ingredients: v.array(v.string()),
-    restrictions: v.array(v.string()),
-    events: v.array(v.string()),
+  }),
+  users: defineTable({
+    disliked_ingredients: v.array(v.any()),
+    events: v.array(v.any()),
+    friends: v.array(v.any()),
+    liked_ingredients: v.array(v.any()),
+    name: v.string(),
+    pinned: v.array(v.any()),
     recipes: v.object({
-      liked: v.array(v.string()),
-      disliked: v.array(v.string()),
+      disliked: v.array(v.any()),
+      liked: v.array(v.any()),
     }),
-    pinned: v.array(v.string()),
-  }).index("by_token", ["tokenIdentifier"]),
+    restrictions: v.array(v.any()),
+    tokenIdentifier: v.string(),
+  }),
   messages: defineTable({
     body: v.string(),
     userID: v.string(),
