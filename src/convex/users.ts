@@ -1,6 +1,7 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+
 /**
  * Insert or update the user in a Convex table then return the document's ID.
  *
@@ -37,6 +38,7 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
+      email: identity.email,
       cuisines: [],
       friends: [],
       likedIngredients: [],
@@ -46,18 +48,13 @@ export const store = mutation({
       recipes: [],
       pinned: [],
       pantry: [],
-      messageHistory: [
-        {
-          content:
-            "You are a helpful assistant that can access external functions. " +
-            "The responses from these function calls will be appended to this dialogue. " +
-            "Please provide responses based on the information from these function calls. Do not make new information up.",
-          role: "system",
-        },
-      ],
+      messageHistory: [{ content: "You are a helpful assistant that can access external functions. " + 
+      "The responses from these function calls will be appended to this dialogue. " +
+      "Please provide responses based on the information from these function calls. Do not make new information up.", role: "system" }]
     });
   },
 });
+
 
 export const getUser = query({
   args: { id: v.id("users") },
@@ -66,6 +63,24 @@ export const getUser = query({
     return user[0];
   },
 });
+
+
+export const getUserIdFromEmail = query ({
+  args: {email: v.string()},
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .collect();
+
+    if (user.length === 0) {
+      return "";
+    }
+    
+    return user[0]._id;
+  }
+});
+
 
 export const retrieveUserData = query({
   handler: async (ctx) => {
@@ -76,9 +91,11 @@ export const retrieveUserData = query({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -86,6 +103,7 @@ export const retrieveUserData = query({
     return user;
   },
 });
+
 
 export const addFriend = mutation({
   args: { friend_id: v.id("users") },
@@ -97,9 +115,11 @@ export const addFriend = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -114,6 +134,7 @@ export const addFriend = mutation({
   },
 });
 
+
 export const removeFriend = mutation({
   args: { friend_id: v.id("users") },
   handler: async (ctx, args) => {
@@ -124,9 +145,11 @@ export const removeFriend = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -143,6 +166,7 @@ export const removeFriend = mutation({
   },
 });
 
+
 export const addCuisine = mutation({
   args: { cuisine: v.string() },
   handler: async (ctx, args) => {
@@ -153,9 +177,11 @@ export const addCuisine = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -170,6 +196,7 @@ export const addCuisine = mutation({
   },
 });
 
+
 export const removeCuisine = mutation({
   args: { cuisine: v.string() },
   handler: async (ctx, args) => {
@@ -180,9 +207,11 @@ export const removeCuisine = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -199,6 +228,7 @@ export const removeCuisine = mutation({
   },
 });
 
+
 export const addPantry = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -209,9 +239,11 @@ export const addPantry = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -226,6 +258,7 @@ export const addPantry = mutation({
   },
 });
 
+
 export const removePantry = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -236,9 +269,11 @@ export const removePantry = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -255,6 +290,7 @@ export const removePantry = mutation({
   },
 });
 
+
 export const addLikedIngredient = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -265,9 +301,11 @@ export const addLikedIngredient = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -282,6 +320,7 @@ export const addLikedIngredient = mutation({
   },
 });
 
+
 export const removeLikedIngredient = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -292,9 +331,11 @@ export const removeLikedIngredient = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -311,6 +352,7 @@ export const removeLikedIngredient = mutation({
   },
 });
 
+
 export const addDislikedIngredient = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -321,9 +363,11 @@ export const addDislikedIngredient = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -338,6 +382,7 @@ export const addDislikedIngredient = mutation({
   },
 });
 
+
 export const removeDislikedIngredient = mutation({
   args: { ingredient: v.string() },
   handler: async (ctx, args) => {
@@ -348,9 +393,11 @@ export const removeDislikedIngredient = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -367,6 +414,7 @@ export const removeDislikedIngredient = mutation({
   },
 });
 
+
 export const addRestriction = mutation({
   args: { diet: v.string() },
   handler: async (ctx, args) => {
@@ -377,9 +425,11 @@ export const addRestriction = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -394,6 +444,7 @@ export const addRestriction = mutation({
   },
 });
 
+
 export const removeRestriction = mutation({
   args: { diet: v.string() },
   handler: async (ctx, args) => {
@@ -404,9 +455,11 @@ export const removeRestriction = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -423,6 +476,7 @@ export const removeRestriction = mutation({
   },
 });
 
+
 export const addEvent = mutation({
   args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
@@ -433,9 +487,11 @@ export const addEvent = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -450,6 +506,7 @@ export const addEvent = mutation({
   },
 });
 
+
 export const removeEvents = mutation({
   args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
@@ -460,9 +517,11 @@ export const removeEvents = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -479,6 +538,7 @@ export const removeEvents = mutation({
   },
 });
 
+
 export const getRecipes = query({
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -488,16 +548,21 @@ export const getRecipes = query({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
 
-    return Promise.all((user.recipes ?? []).map((recipeId) => ctx.db.get(recipeId)));
+    return Promise.all(
+    (user.recipes ?? []).map((recipeId) => ctx.db.get(recipeId))
+    );
   },
 });
+
 
 export const addRecipe = mutation({
   args: { recipeId: v.id("recipes") },
@@ -509,9 +574,11 @@ export const addRecipe = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -536,9 +603,11 @@ export const addPinned = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -562,16 +631,21 @@ export const getPinned = query({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
 
-    return Promise.all((user.pinned ?? []).map((recipeId) => ctx.db.get(recipeId)));
+    return Promise.all(
+    (user.pinned ?? []).map((recipeId) => ctx.db.get(recipeId))
+    );
   },
 });
+
 
 export const removeRecipe = mutation({
   args: { recipeId: v.id("recipes") },
@@ -583,9 +657,11 @@ export const removeRecipe = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -612,9 +688,11 @@ export const removePinned = mutation({
 
     const user = await ctx.db
       .query("users")
-      .withIndex("by_token", (q) => q.eq("tokenIdentifier", identity.tokenIdentifier))
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
       .unique();
-
+    
     if (user === null) {
       return false;
     }
@@ -630,6 +708,7 @@ export const removePinned = mutation({
     return true;
   },
 });
+
 
 export const addMessage = mutation({
   args: { id: v.id("users"), role: v.string(), content: v.string() },
@@ -659,10 +738,10 @@ export const addMessage = mutation({
       return false;
     }
 
-    const msg: { role: string; content: string } = {
+    const msg: { role: string; content: string; } = {
       role: args.role,
-      content: args.content,
-    };
+      content: args.content
+    }
 
     let updatedMsgs = user.messageHistory;
     updatedMsgs.push(msg);
@@ -671,6 +750,7 @@ export const addMessage = mutation({
     return true;
   },
 });
+
 
 export const deleteMessageHistory = mutation({
   args: { id: v.id("users") },
@@ -700,15 +780,15 @@ export const deleteMessageHistory = mutation({
       return false;
     }
 
-    await ctx.db.patch(id, {
-      messageHistory: [
-        {
-          content:
-            "You are a helpful assistant that can access external functions. The responses from these function calls will be appended to this dialogue. Please provide responses based on the information from these function calls. Do not make new information up.",
-          role: "system",
-        },
-      ],
+    await ctx.db.patch(id, { 
+      messageHistory : 
+      [
+        { 
+          content: "You are a helpful assistant that can access external functions. The responses from these function calls will be appended to this dialogue. Please provide responses based on the information from these function calls. Do not make new information up.", 
+          role: "system" 
+        }
+      ]
     });
     return true;
-  },
+  }
 });
