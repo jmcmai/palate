@@ -1,9 +1,9 @@
-"use node"
+"use node";
 import { TavilySearchAPIRetriever } from "@langchain/community/retrievers/tavily_search_api";
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
-const includedDomains : string[] = [
+const includedDomains: string[] = [
   "https://www.101cookbooks.com/",
   "https://www.ambitiouskitchen.com/",
   "https://www.averiecooks.com/",
@@ -45,8 +45,8 @@ const includedDomains : string[] = [
   "https://whatsgabycooking.com/",
   "https://www.woolworths.com.au/",
   "https://www.yummly.com/",
-  "https://www.jamieoliver.com/"
-]
+  "https://www.jamieoliver.com/",
+];
 
 const retriever = new TavilySearchAPIRetriever({
   apiKey: process.env.TAVILY_API_KEY,
@@ -56,12 +56,12 @@ const retriever = new TavilySearchAPIRetriever({
 
 export const retrieveSearch = action({
   args: {
-    searchParam: v.string()
+    searchParam: v.string(),
   },
   handler: async (ctx, args) => {
-    const retrievedSearchDocs = await retriever.getRelevantDocuments( args.searchParam );
+    const retrievedSearchDocs = await retriever.getRelevantDocuments(args.searchParam);
 
-    let recipeURLs : string[]  = [];
+    let recipeURLs: string[] = [];
     retrievedSearchDocs.forEach((result) => {
       console.log(result.metadata.source);
       recipeURLs.push(result.metadata.source);
@@ -70,17 +70,16 @@ export const retrieveSearch = action({
   },
 });
 
-
 // recipe scraper
 const recipeScraper = require("recipe-scraper");
 
-export const scrapeRecipes = action ({
+export const scrapeRecipes = action({
   args: {
     recipeURLs: v.array(v.string()),
   },
   handler: async (ctx, args) => {
     let recipes: string[] = [];
-    for ( let i = 0 ; i < args.recipeURLs.length; i++ ) {
+    for (let i = 0; i < args.recipeURLs.length; i++) {
       try {
         let rawRecipe = await recipeScraper(args.recipeURLs[i]);
         rawRecipe["URL"] = args.recipeURLs[i];

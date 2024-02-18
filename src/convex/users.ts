@@ -38,6 +38,7 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
+      email: identity.email,
       cuisines: [],
       friends: [],
       likedIngredients: [],
@@ -61,6 +62,23 @@ export const getUser = query({
     const user = await ctx.db.query("users").collect();
     return user[0];
   },
+});
+
+
+export const getUserIdFromEmail = query ({
+  args: {email: v.string()},
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .collect();
+
+    if (user.length === 0) {
+      return "";
+    }
+    
+    return user[0]._id;
+  }
 });
 
 
@@ -774,5 +792,3 @@ export const deleteMessageHistory = mutation({
     return true;
   }
 });
-
-
