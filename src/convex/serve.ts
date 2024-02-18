@@ -29,9 +29,9 @@ export const answer = action({
         } else if ( functionCalled === "get_recipe_recommendation_request" ) {
           console.log("user wants to request a recommendation!");
           // take into account likes and dislikes, def no dietary restrictions
-          let likedIngredients = user.likedIngredients + JSON.parse(response.function.arguments).requested_ingredients;
-          let dislikedIngredients = user.dislikedIngredients + JSON.parse(response.function.arguments).disliked_ingredients;;
-          let cuisine = JSON.parse(response.function.arguments).cuisine;
+          let likedIngredients : string[] = user.likedIngredients.concat(JSON.parse(response.function.arguments).requested_ingredients);
+          let dislikedIngredients : string[] = user.dislikedIngredients.concat(JSON.parse(response.function.arguments).disliked_ingredients);
+          let cuisine : string[] = [JSON.parse(response.function.arguments).cuisine];
 
           const dishes = await ctx.runAction (api.dishes.searchDishes, { 
             ingredients: likedIngredients,
@@ -50,10 +50,9 @@ export const answer = action({
         const recipes = await ctx.runAction(api.recipeRetrievers.scrapeRecipes, { recipeURLs: recipeURLs });
         const r = recipes[0]
         const recipeJSON = JSON.parse(r);
-        // console.log(recipeJSON.name);
-        // console.log(recipeJSON.description);
-        // console.log(recipeJSON.URL);
-        // TODO: recipe checking ! until get one? loop.
+        console.log(recipeJSON);
+
+        // add recipe to user's recipe book.
 
         // run action to get response using AI
         const message : any = await ctx.runAction(api.together.respond, { userID: args.userID, recipe: recipeJSON });
