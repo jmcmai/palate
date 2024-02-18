@@ -15,11 +15,11 @@ h1 {
   font-family: "Bebas Neue", sans-serif;
   letter-spacing: 6px;
   color: #212427;
-  font-size: calc(24px + 1.5vw);
+  font-size: calc(20px + 1.5vw);
 }
 
 h2 {
-  font-size: calc(20px + 1vw);
+  font-size: calc(18px + 1vw);
 }
 
 h3 {
@@ -36,6 +36,10 @@ p {
 
 .grey-text{
   color: #21242742;
+}
+
+.content-body {
+  margin-left: 18vw;
 }
 
 /* NAVBAR CSS */
@@ -64,7 +68,9 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 150px;
 }
+
 .nav-bar ul {
   list-style-type: none;
   padding-left: 0;
@@ -74,7 +80,7 @@ p {
 .nav-bar ul li {
   display: flex; 
   align-items: center; 
-  margin-bottom: 2vw;
+  margin-bottom: 1vw;
 }
 
 .nav-bar svg {
@@ -103,34 +109,22 @@ p {
 }
 
 .navbar-menu {
-  margin-top: 50px;
-}
-
-.settings {
-  position: absolute;
-  bottom: 15vh;
+  margin-top: 25px;
 }
 
 .mobile-menu-icon svg {
   font-size: 30px;
   color: #212427;
-  margin-top: 25px;
-  margin-left: 25px
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1024px) {
   .mobile-menu-icon {
       display: block;
       position: fixed;
-      top: 10px;
-      left: 10px;
+      top: 30px;
+      left: 30px;
       cursor: pointer;
       z-index: 1000;
-  }
-
-  .settings {
-    position: absolute;
-    bottom: 40vh;
   }
 
   .navbar {
@@ -148,7 +142,6 @@ p {
       height: 100vh;
       background-color: #8EC5FC;
       background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
-      padding-top: 20vh;
       margin: 0;
       z-index: 999;
   }
@@ -159,6 +152,7 @@ p {
     flex-wrap: nowrap;
     align-content: center;
     align-items: center;
+    padding-top: 30vh;
 }
 
   .nav-bar ul li a {
@@ -170,7 +164,7 @@ p {
     position: fixed;
     top: 0;
     left: 0;
-    margin-top: 7vh;
+    margin-top: 15vh;
     width: 100%;
     z-index: 1000; 
 }
@@ -189,12 +183,18 @@ p {
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    min-width: 200px;
+    max-width: 200px;
     z-index: 1001;
     margin: 0;
-    background-color: rgb(151, 151, 158);
+    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+    padding: 10px;
+    border-radius: 25px;
   }
   .logo.menu-open {
     display: none;
+  }
+
+  .content-body {
+    margin-left: 0;
   }
 }

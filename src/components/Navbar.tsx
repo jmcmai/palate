@@ -17,25 +17,13 @@ const Navbar: React.FC = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
 
-    const Greeting = () => {
-        // Array of random greetings
-        const greetings = ["What's Cookin'", "Welcome Back", "Ready, Set, Cook", "Sizzle and Serve", "Preheat and Prepare", "Let's Cook"];
-
-        // Generate a random index to pick a greeting
-        const randomIndex = Math.floor(Math.random() * greetings.length);
-
-        return (
-            <div className={`center greeting-container ${isMobileMenuOpen ? 'greeting-show' : 'greeting-hide'}`}>
-                <h3 className="small-margin">{greetings[randomIndex]},</h3>
-                {isAuthenticated && user && <h3 className="small-margin grey-text">{user.name}!</h3>}
-            </div>
-        );
-    };
-
     return (
         <nav className="navbar">
             <img className={`logo ${isMobileMenuOpen ? 'menu-open' : 'menu-close'}`} src={Logo} alt="Logo" />
-            <Greeting /> {/* Render Greeting component */}
+            <div className={`center greeting-container ${isMobileMenuOpen ? 'greeting-show' : 'greeting-hide'}`}>
+                <h3 className="small-margin">What's Cookin',</h3>
+                {isAuthenticated && user && <h3 className="small-margin grey-text">{user.name}?</h3>}
+            </div>
             <div className="nav-bar">
                 <div className={`mobile-menu-icon ${isMobileMenuOpen ? 'white-icon' : 'black-icon'}`} onClick={toggleMobileMenu}>
                     <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
@@ -57,11 +45,6 @@ const Navbar: React.FC = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/friends" className={location.pathname === '/friends' ? 'active' : ''}>
-                        <FontAwesomeIcon icon={faUserFriends} /> friends
-                        </Link>
-                    </li>
-                    <li className="settings">
                         <Link to="/settings" className={location.pathname === '/settings' ? 'active' : ''}>
                         <FontAwesomeIcon icon={faCog} /> settings
                         </Link>
