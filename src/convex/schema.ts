@@ -1,10 +1,12 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
+
 export default defineSchema({
   users: defineTable({
     name: v.string(),
     tokenIdentifier: v.string(),
+    cuisines: v.array(v.string()),
     friends: v.array(v.string()),
     likedIngredients: v.array(v.string()),
     dislikedIngredients: v.array(v.string()),

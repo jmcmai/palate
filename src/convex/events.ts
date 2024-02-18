@@ -108,3 +108,25 @@ export const removeParticipant = mutation({
       return true;
     },
 });
+
+
+export const syncPalate = action({
+    args: { id: v.id("events") },
+    handler: async (ctx, args) => {
+        const event = await ctx.runQuery(api.events.getEvent, {id: args.id});
+        const participants = event.participants;
+
+        let user = await ctx.runQuery(api.users.getUser, {id: participants[0]});
+        let cuisine = user.cuisines;
+        let ingredients = user.likedIngredients;
+
+        for (let i = 1; i < participants.length; i++) {
+            user = await ctx.runQuery(api.users.getUser, {id: participants[i]});
+            cuisine = [...new Set([...user.cuisines, ...cuisine])];
+            ingredients = [...new Set([...user.likedIngredients, ...ingredients])];
+        }
+
+        if (cuisine && ingredients) {
+        }
+    },
+});
