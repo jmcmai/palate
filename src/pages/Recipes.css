@@ -187,13 +187,26 @@
   .modal-content {
     background-color: #fefefe;
     margin: auto;
-    margin-top: 7vh;
+    margin-top: 10vh;
     padding: 20px;
     padding-bottom: 50px;
     border: 1px solid #888;
     width: 40%;
     border-radius: 5px;
     position: relative;
+  }
+
+  @media screen and (max-width: 1600px) {
+    .modal-content {
+      margin-top: 4vh;
+      width: 80%;
+    }
+    .modal-content p {
+      font-size: calc(10px + 0.4vw);
+    }
+    .modal-content img {
+      max-width: 200px;
+    }
   }
   
   .modal-content .close {
