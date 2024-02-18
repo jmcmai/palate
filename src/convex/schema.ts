@@ -14,6 +14,7 @@ export default defineSchema({
     events: v.array(v.id("events")),
     recipes: v.array(v.id("recipes")),
     pinned: v.array(v.id("recipes")),
+    pantry: v.array(v.string()),
     messageHistory: v.array(v.object({ role: v.string(), content: v.string() }))
   }).index("by_token", ["tokenIdentifier"]),
   apiResponses: defineTable({

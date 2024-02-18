@@ -46,6 +46,7 @@ export const store = mutation({
       events: [],
       recipes: [],
       pinned: [],
+      pantry: [],
       messageHistory: [{ content: "You are a helpful assistant that can access external functions. " + 
       "The responses from these function calls will be appended to this dialogue. " +
       "Please provide responses based on the information from these function calls. Do not make new information up.", role: "system" }]
@@ -203,6 +204,68 @@ export const removeCuisine = mutation({
     if (index !== -1) {
       updatedCuisines.splice(index, 1);
       await ctx.db.patch(user._id, { cuisines: updatedCuisines });
+    }
+
+    return true;
+  },
+});
+
+
+export const addPantry = mutation({
+  args: { ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedPantry = user.pantry;
+    if (!updatedPantry.includes(args.ingredient)) {
+      updatedPantry.push(args.ingredient);
+      await ctx.db.patch(user._id, { likedIngredients: updatedPantry });
+    }
+
+    return true;
+  },
+});
+
+
+export const removePantry = mutation({
+  args: { ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedPantry = user.pantry;
+
+    const index = updatedPantry.indexOf(args.ingredient);
+    if (index !== -1) {
+      updatedPantry.splice(index, 1);
+      await ctx.db.patch(user._id, { pantry: updatedPantry });
     }
 
     return true;
@@ -483,7 +546,6 @@ export const getRecipes = query({
 });
 
 
-
 export const addRecipe = mutation({
   args: { recipeId: v.id("recipes") },
   handler: async (ctx, args) => {
@@ -539,6 +601,30 @@ export const addPinned = mutation({
     }
 
     return true;
+  },
+});
+
+export const getPinned = query({
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    return Promise.all(
+    (user.pinned ?? []).map((recipeId) => ctx.db.get(recipeId))
+    );
   },
 });
 
