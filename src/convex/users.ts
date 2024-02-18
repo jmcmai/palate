@@ -54,9 +54,177 @@ export const store = mutation({
 });
 
 export const getUser = query({
-  args: { id: v.string() },
+  args: { id: v.id("users") },
   handler: async (ctx) => {
     const user = await ctx.db.query("users").collect();
     return user[0];
+  },
+});
+
+export const addFriend = mutation({
+  args: { id: v.id("users"), friend_id: v.id("users") },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedFriendsList = user.friends;
+    if (!updatedFriendsList.includes(args.friend_id)) {
+      updatedFriendsList.push(args.friend_id);
+      await ctx.db.patch(id, { friends: updatedFriendsList });
+    }
+
+    return true;
+  },
+});
+
+export const removeFriend = mutation({
+  args: { id: v.id("users"), friend_id: v.id("users") },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedFriendsList = user.friends;
+
+    const index = updatedFriendsList.indexOf(args.friend_id);
+    if (index !== -1) {
+      updatedFriendsList.splice(index, 1);
+      await ctx.db.patch(id, { friends: updatedFriendsList });
+    }
+
+    return true;
+  },
+});
+
+export const addLikedIngredient = mutation({
+  args: { id: v.id("users"), ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedLikedIngredients = user.liked_ingredients;
+    if (!updatedLikedIngredients.includes(args.ingredient)) {
+      updatedLikedIngredients.push(args.ingredient);
+      await ctx.db.patch(id, { liked_ingredients: updatedLikedIngredients });
+    }
+
+    return true;
+  },
+});
+
+export const removeLikedIngredient = mutation({
+  args: { id: v.id("users"), ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedLikedIngredients = user.liked_ingredients;
+
+    const index = updatedLikedIngredients.indexOf(args.ingredient);
+    if (index !== -1) {
+      updatedLikedIngredients.splice(index, 1);
+      await ctx.db.patch(id, { liked_ingredients: updatedLikedIngredients });
+    }
+
+    return true;
+  },
+});
+
+export const addDislikedIngredient = mutation({
+  args: { id: v.id("users"), ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedDislikedIngredients = user.disliked_ingredients;
+    if (!updatedDislikedIngredients.includes(args.ingredient)) {
+      updatedDislikedIngredients.push(args.ingredient);
+      await ctx.db.patch(id, { disliked_ingredients: updatedDislikedIngredients });
+    }
+
+    return true;
+  },
+});
+
+export const removeDislikedIngredient = mutation({
+  args: { id: v.id("users"), ingredient: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedDislikedIngredients = user.disliked_ingredients;
+
+    const index = updatedDislikedIngredients.indexOf(args.ingredient);
+    if (index !== -1) {
+      updatedDislikedIngredients.splice(index, 1);
+      await ctx.db.patch(id, { disliked_ingredients: updatedDislikedIngredients });
+    }
+
+    return true;
+  },
+});
+
+export const addRestriction = mutation({
+  args: { id: v.id("users"), diet: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedDiet = user.restrictions;
+    if (!updatedDiet.includes(args.diet)) {
+      updatedDiet.push(args.diet);
+      await ctx.db.patch(id, { restrictions: updatedDiet });
+    }
+
+    return true;
+  },
+});
+
+export const removeRestriction = mutation({
+  args: { id: v.id("users"), diet: v.string() },
+  handler: async (ctx, args) => {
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    let updatedDiet = user.restrictions;
+
+    const index = updatedDiet.indexOf(args.diet);
+    if (index !== -1) {
+      updatedDiet.splice(index, 1);
+      await ctx.db.patch(id, { restrictions: updatedDiet });
+    }
+
+    return true;
   },
 });
