@@ -2,6 +2,7 @@ import { query, action } from "./_generated/server";
 import { api } from "./_generated/api";
 import { v } from "convex/values";
 
+// function to send user message to the chatbot.
 export const send = action({
   args: { userID: v.id("users"), role: v.string(), content: v.string() },
   handler: async (ctx, args) => {
@@ -13,8 +14,8 @@ export const send = action({
     });
     
     // schedule chatbot to respond after insert
-    await ctx.scheduler.runAfter(0, api.together.answer, {
+    await ctx.scheduler.runAfter(0, api.serve.answer, {
       userID: args.userID
     })
-  },
+  }
 });

@@ -49,7 +49,7 @@ export const store = mutation({
       pinned: [],
       messageHistory: [{ content: "You are an assistant that loves cooking and can access external functions. " + 
       "The responses from these function calls will be appended to this dialogue. " +
-      "Please provide responses based on the information from these function calls.", role: "system" }]
+      "Please provide responses based on the information from these function calls. Do not make new information up.", role: "system" }]
     });
   },
 });

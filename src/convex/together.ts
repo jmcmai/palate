@@ -1,5 +1,10 @@
 import OpenAI from "openai";
-import { action, mutation, internalQuery } from "./_generated/server";
+import {
+  action,
+  internalAction,
+  mutation,
+  internalQuery,
+} from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import { v } from "convex/values";
 
@@ -18,109 +23,103 @@ const tools = [
           type: "array",
           description: "the requested ingredients for the recommended recipe",
         },
-        "disliked_ingredients": {
-          "type": "array",
-          "description": "the ingredients to avoid for the recommended recipe"
-        }
+        disliked_ingredients: {
+          type: "array",
+          description: "the ingredients to avoid for the recommended recipe",
+        },
       },
-      "required": ["requested_ingredients"]
-    }
+      required: ["requested_ingredients"],
+    },
   },
   {
-    "name": "get_recipe_request",
-    "description": "Extract the recipe the user wants from the request.",
-    "parameters": {
-      "type": "object",
-      "properties": {
-        "recipe_name": {
-          "type": "string",
-          "description": "The name of the requested recipe. Cannot be a ingredient."
+    name: "get_recipe_request",
+    description: "Extract the recipe the user wants from the request.",
+    parameters: {
+      type: "object",
+      properties: {
+        recipe_name: {
+          type: "string",
+          description:
+            "The name of the requested recipe. Cannot be a ingredient.",
         },
         requested_ingredients: {
           type: "array",
           description: "the requested ingredients for the recipe",
         },
-        "disliked_ingredients": {
-          "type": "array",
-          "description": "the ingredients to avoid for the recipe"
-        }
+        disliked_ingredients: {
+          type: "array",
+          description: "the ingredients to avoid for the recipe",
+        },
       },
-      "required": ["recipe_name"]
-    }
-  }
+      required: ["recipe_name"],
+    },
+  },
 ];
-// 
+
 /*
  * FUNCTIONS
  */
 
-export const answer = action({
-  args: {
-    userID: v.id("users")
-  },
+// uses function calling to extract data
+export const extractData = internalAction({
+  args: { userID: v.id("users") },
   handler: async (ctx, args) => {
-    // get user message history
-    const user = await ctx.runQuery( api.users.getUser, { id: args.userID } );
-    const userMessageHistory: any = user.messageHistory;
+    let user: any = await ctx.runQuery(api.users.getUser, { id: args.userID });
+    let messageHistory = user.messageHistory;
 
-    // extract json data from the user message
-    const data = await extractData( userMessageHistory );
+    const openai = new OpenAI({
+      apiKey: process.env.TOGETHER_API_KEY,
+      baseURL: "https://api.together.xyz/v1",
+    });
+    const completion = await openai.chat.completions.create({
+      model: "togethercomputer/CodeLlama-34b-Instruct",
+      max_tokens: 1024,
+      temperature: 0.1,
+      functions: tools,
+      function_call: "auto",
+      messages: messageHistory,
+      response_format: { type: "json_object" },
+    });
 
-    if ( !data.content ) {
-        const response = data.tool_calls![0];
-        const functionCalled = response.function.name;
-        
-        // parse out information + add user preferences
-        let recipe = "";
-        if ( functionCalled === "get_recipe_request" ) {
-          // get recipe name
-          recipe = JSON.parse(response.function.arguments).recipe_name;
-        } else if ( functionCalled === "get_recipe_recommendation_request" ) {
-          console.log("user wants to request a recommendation!");
-          // take into account likes and dislikes, def no dietary restrictions
-        }
-        // search up things and get links
-        let searchQuery = recipe + " recipe";
-        const recipeURLs = await ctx.runAction(api.tavily.retrieveSearch, { searchParam: searchQuery });
-        console.log(recipeURLs);
-
-        // recipe scraper
-      
-      } else {
-        // add function called to the db
-        console.log(data.content);
-        // await ctx.runMutation(api.together.saveData, {
-        //   botID: "Ramsey",
-        //   response: data.content,
-        //   function: "None"
-        // });
-
-        // save to user messages
-        await ctx.runMutation( api.users.addMessage, {
-          id: args.userID,
-          role: "assistant",
-          content: data.content,
-        });
-
-      // TODO: return a response to the user !!
-      }
-
-  }
+    // Extract the generated completion from the OpenAI API response
+    const completionResponse = completion.choices[0].message;
+    return completionResponse;
+  },
 });
 
-// uses function calling to extract data
-async function extractData ( userMessageHistory: [] ) {
-  const openai = new OpenAI({ apiKey: process.env.TOGETHER_API_KEY, baseURL: 'https://api.together.xyz/v1' });
-  const completion = await openai.chat.completions.create({
-    model: 'togethercomputer/CodeLlama-34b-Instruct',
-    max_tokens: 1024,
-    functions: tools,
-    function_call: 'auto',
-    messages: userMessageHistory,
-    response_format: { type: "json_object" }
-  });
+export const respond = internalAction({
+  args: { userID: v.id("users"), recipe: v.any() },
+  handler: async (ctx, args) => {
+    // model system call and add to user's message history
+    let recommendInstructions =
+      "You are an assistant who is now recommending the user a recipe. Please recommend the following information from the preassigned recipe: \n\n" +
+      `You must include the name of the recipe: ${args.recipe.name} \n` +
+      `You must include the description of the recipe: ${args.recipe.description} \n` +
+      `You must include the ingredients list of the recipe (in a list format): ${args.recipe.ingredients} \n` +
+      `You must include the URL of the recipe: ${args.recipe.URL}. \n\n` +
+      "You must recommend all of these fields. You cannot leave any of these fields out of your response. Do not change anything related to the recipe.";
 
-  // Extract the generated completion from the OpenAI API response
-  const completionResponse = completion.choices[0].message;
-  return completionResponse;
-}
+    await ctx.runMutation(api.users.addMessage, {
+      role: "system",
+      content: recommendInstructions,
+      id: args.userID,
+    });
+
+    // get recommendation message
+    const user: any = await ctx.runQuery(api.users.getUser, { id: args.userID });
+    const openai = new OpenAI({
+      apiKey: process.env.TOGETHER_API_KEY,
+      baseURL: "https://api.together.xyz/v1",
+    });
+    const completion = await openai.chat.completions.create({
+      model: "togethercomputer/CodeLlama-34b-Instruct",
+      max_tokens: 1024,
+      temperature: 0.1,
+      messages: user.messageHistory,
+    });
+
+    // Extract the generated completion from the OpenAI API response
+    const completionResponse = completion.choices[0].message;
+    return completionResponse;
+  },
+});
