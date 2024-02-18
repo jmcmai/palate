@@ -224,3 +224,8 @@
   .thumbs-down {
     color: red;
   }
+
+  .no-recipes {
+    width: 100%;
+    padding: 0;
+  }

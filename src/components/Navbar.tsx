@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
                     </li>
                     <li>
                         <Link to="/chat" className={location.pathname === '/chat' ? 'active' : ''}>
-                            <FontAwesomeIcon icon={faRobot} /> chat
+                            <FontAwesomeIcon icon={faRobot} /> ramsey
                         </Link>
                     </li>
                     <li>

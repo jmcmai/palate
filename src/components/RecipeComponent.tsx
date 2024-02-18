@@ -46,7 +46,7 @@ const RecipeComponent: React.FC<RecipeComponentProps> = ({ recipe }) => {
           <div className="modal-content">
             <span className="close" onClick={toggleModal}>&times;</span>
             {recipe.liked === -1 && <FontAwesomeIcon icon={faThumbsDown} className="thumbs thumbs-down" />}
-            {recipe.liked === 0 && <FontAwesomeIcon icon={faThumbsUp} className="thumbs thumbs-up" />}
+            {recipe.liked === 1 && <FontAwesomeIcon icon={faThumbsUp} className="thumbs thumbs-up" />}
             <h2 className="recipe-title center">{recipe.name}</h2>
             {recipe.image && <img src={recipe.image} alt={recipe.name} />}
             <p>Cook Time: {recipe.totalTime} minutes</p>
