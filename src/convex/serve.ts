@@ -60,7 +60,7 @@ export const answer = action({
           url: r.url,
         });
 
-        await ctx.runMutation(api.users.addRecipe, { recipeId: recipeId });
+        await ctx.runMutation(api.users.addPinned, { recipeId: recipeId });
 
         // run action to get response using AI
         const message : any = await ctx.runAction(api.together.respond, { userID: args.userID, recipe: r });

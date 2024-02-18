@@ -514,6 +514,35 @@ export const addRecipe = mutation({
   },
 });
 
+export const addPinned = mutation({
+  args: { recipeId: v.id("recipes") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedPinned = user.pinned;
+    if (!updatedPinned.includes(args.recipeId)) {
+      updatedPinned.push(args.recipeId);
+      await ctx.db.patch(user._id, { pinned: updatedPinned });
+    }
+
+    return true;
+  },
+});
+
 
 export const removeRecipe = mutation({
   args: { recipeId: v.id("recipes") },
@@ -540,6 +569,37 @@ export const removeRecipe = mutation({
     if (index !== -1) {
       updatedRecipes.splice(index, 1);
       await ctx.db.patch(user._id, { recipes: updatedRecipes });
+    }
+
+    return true;
+  },
+});
+
+export const removePinned = mutation({
+  args: { recipeId: v.id("recipes") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedPinned = user.pinned;
+
+    const index = updatedPinned.indexOf(args.recipeId);
+    if (index !== -1) {
+      updatedPinned.splice(index, 1);
+      await ctx.db.patch(user._id, { pinned: updatedPinned });
     }
 
     return true;

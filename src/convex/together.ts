@@ -72,13 +72,12 @@ export const extractData = internalAction({
       baseURL: "https://api.together.xyz/v1",
     });
     const completion = await openai.chat.completions.create({
-      model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      model: "togethercomputer/CodeLlama-34b-Instruct",
       max_tokens: 1024,
       temperature: 0.7,
       functions: tools,
       function_call: "auto",
       messages: messageHistory,
-      response_format: { type: "json_object" },
     });
 
     // Extract the generated completion from the OpenAI API response
@@ -101,7 +100,7 @@ export const respond = action({
       baseURL: "https://api.together.xyz/v1",
     });
     const completion = await openai.chat.completions.create({
-      model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      model: "togethercomputer/CodeLlama-34b-Instruct",
       max_tokens: 1024,
       temperature: 0.5,
       messages: [ message ]
