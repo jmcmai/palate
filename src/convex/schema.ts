@@ -13,6 +13,7 @@ export default defineSchema({
     events: v.array(v.id("events")),
     recipes: v.array(v.id("recipes")),
     pinned: v.array(v.id("recipes")),
+    pantry: v.array(v.string()),
     messageHistory: v.array(v.object({ role: v.string(), content: v.string() })),
   }).index("by_token", ["tokenIdentifier"]),
   apiResponses: defineTable({
@@ -37,7 +38,7 @@ export default defineSchema({
     date: v.string(),
     host: v.id("users"),
     participants: v.array(v.id("users")),
-    userRecipe: v.array(v.object({ user_id: v.id("user"), recipe_id: v.id("recipe") })),
+    recipes: v.array(v.id("recipes")),
   }),
   recipes: defineTable({
     name: v.string(),
