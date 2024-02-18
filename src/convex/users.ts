@@ -64,6 +64,7 @@ export const getUser = query({
 
 
 export const retrieveUserData = query({
+  
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
