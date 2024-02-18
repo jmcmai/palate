@@ -11,13 +11,13 @@ import { v } from "convex/values";
 const tools = [
   {
     name: "get_recipe_recommendation_request",
-    description: "Get the information in a given recipe request.",
+    description: "Gathers information about user's request for a recipe recommendation.",
     parameters: {
       type: "object",
       properties: {
         cuisine: {
           type: "string",
-          description: "The cuisine of the requested dish",
+          description: "The cuisine of the requested recipe",
         },
         requested_ingredients: {
           type: "array",
@@ -33,7 +33,7 @@ const tools = [
   },
   {
     name: "get_recipe_request",
-    description: "Extract the recipe the user wants from the request.",
+    description: "Retrieves the wanted recipe from the user.",
     parameters: {
       type: "object",
       properties: {
@@ -72,9 +72,9 @@ export const extractData = internalAction({
       baseURL: "https://api.together.xyz/v1",
     });
     const completion = await openai.chat.completions.create({
-      model: "togethercomputer/CodeLlama-34b-Instruct",
+      model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
       max_tokens: 1024,
-      temperature: 0.1,
+      temperature: 0.7,
       functions: tools,
       function_call: "auto",
       messages: messageHistory,
@@ -91,31 +91,20 @@ export const respond = action({
   args: { userID: v.id("users"), recipe: v.any() },
   handler: async (ctx, args) => {
     // model system call and add to user's message history
-    let recommendInstructions =
-      "You are an assistant who is now recommending the user a recipe. Please recommend the following information from the preassigned recipe: \n\n" +
-      `You must include the name of the recipe: ${args.recipe.name} \n` +
-      `You must include the description of the recipe: ${args.recipe.description} \n` +
-      `You must include the ingredients list of the recipe (in a list format): ${args.recipe.ingredients} \n` +
-      `You must include the URL of the recipe: ${args.recipe.URL}. \n\n` +
-      "You must recommend all of these fields. You cannot leave any of these fields out of your response. Do not change anything related to the recipe.";
+    let message : any = {
+      role: "assistant",
+      content: `Hmm...I think you would like this recipe: ${args.recipe.name} \n Here is the recipe: " ${args.recipe.description} " \nYou can take a peek at the ingredients, too: ${args.recipe.ingredients} \nURL: ${args.recipe.URL}`
+    }
 
-    await ctx.runMutation(api.users.addMessage, {
-      role: "system",
-      content: recommendInstructions,
-      id: args.userID,
-    });
-
-    // get recommendation message
-    const user: any = await ctx.runQuery(api.users.getUser, { id: args.userID });
     const openai = new OpenAI({
       apiKey: process.env.TOGETHER_API_KEY,
       baseURL: "https://api.together.xyz/v1",
     });
     const completion = await openai.chat.completions.create({
-      model: "togethercomputer/CodeLlama-34b-Instruct",
+      model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
       max_tokens: 1024,
-      temperature: 0.1,
-      messages: user.messageHistory,
+      temperature: 0.5,
+      messages: [ message ]
     });
 
     // Extract the generated completion from the OpenAI API response
