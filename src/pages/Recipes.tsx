@@ -28,10 +28,6 @@ const Recipes: React.FC = () => {
         ) : (
           <h2 className="grey-text no-recipes center">No previous recipes yet!<br></br>Let's cook something up...</h2>
         )}
-        {usersRecipes &&
-          usersRecipes.map((recipe: any, index: number) => (
-            <RecipeComponent key={index} recipe={recipe} />
-          ))}
       </div>
       <h1 className="content-body center">📌 Pinned Recipes 📌</h1>
       <div className="content-body recipes-list">
@@ -49,6 +45,7 @@ const Recipes: React.FC = () => {
         <LikedCuisines />
         <DislikedIngredients />
         <DietaryRestrictions />
+        <Pantry/>
       </div>
     </Template>
   );

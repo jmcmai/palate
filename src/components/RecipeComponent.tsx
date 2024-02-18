@@ -24,14 +24,14 @@ interface RecipeComponentProps {
 const RecipeComponent: React.FC<RecipeComponentProps> = ({ recipe }) => {
   const [showModal, setShowModal] = useState(false);
   const user = useQuery(api.users.retrieveUserData);
-  const userLikedIngredients: string[] = user ? user.likedIngredients : [];
+  const userPantry: string[] = user ? user.pantry : [];
 
   const toggleModal = () => {
     setShowModal(!showModal);
   };
 
   const isLikedIngredient = (ingredient: string) => {
-    return userLikedIngredients.some((likedIngredient: string) =>
+    return userPantry.some((likedIngredient: string) =>
       likedIngredient.toLowerCase() === ingredient.toLowerCase()
     );
   };
@@ -50,14 +50,14 @@ const RecipeComponent: React.FC<RecipeComponentProps> = ({ recipe }) => {
             <h2 className="recipe-title center">{recipe.name}</h2>
             {recipe.image && <img src={recipe.image} alt={recipe.name} />}
             <p>Cook Time: {recipe.totalTime} minutes</p>
-            <p>Ingredients:</p>
-            <ul>
-              {recipe.ingredients.map((ingredient, index) => (
-                <li key={index} style={{ color: isLikedIngredient(ingredient) ? 'green' : 'inherit' }}>
-                  {ingredient}
-                </li>
+            <div className="y-overflow">
+              <p>Ingredients: {recipe.ingredients.map((ingredient, index) => (
+                <span key={index} style={{ color: isLikedIngredient(ingredient) ? 'green' : 'inherit' }}>
+                  {ingredient}{index !== recipe.ingredients.length - 1 ? ', ' : ''}
+                </span>
               ))}
-            </ul>
+              </p>
+            </div>
             <button className="input-button"
             onClick={() => window.open(recipe.url, '_blank', 'noopener noreferrer')}
           >
