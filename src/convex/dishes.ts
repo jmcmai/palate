@@ -2,14 +2,19 @@ import { action, query, internalQuery } from "./_generated/server";
 import { api, internal } from "../convex/_generated/api";
 import { v } from "convex/values";
 
+
 export const listDishes = query({
-  args: { ingredients: v.string(), cuisine: v.string() },
+  args: { ingredients: v.string(), cuisine: v.array(v.string()) },
   handler: async (ctx, args) => {
+
+    if (!args.cuisine.length) {
+      return;
+    }
 
     const dishesQuery = await ctx.db
     .query("dishes")
     .withSearchIndex("search_ingredients", (q) =>
-      q.search("ingredients", args.ingredients).eq("cuisine", args.cuisine)
+      q.search("ingredients", args.ingredients).eq("cuisine", args.cuisine[0])
     )
     .take(300);
 
@@ -54,12 +59,16 @@ export const getIngredients = internalQuery({
 
 
 export const searchDishes = action({
-  args: { ingredients: v.string(), dislikedIngredients: v.array(v.string()), cuisine: v.string() },
+  args: { ingredients: v.array(v.string()), dislikedIngredients: v.array(v.string()), cuisine: v.array(v.string()) },
   handler: async (ctx, args) => {
     const dishesQuery = await ctx.runQuery(api.dishes.listDishes, {
-      ingredients: args.ingredients,
+      ingredients: args.ingredients.join(","),
       cuisine: args.cuisine
     });
+
+    if (!dishesQuery) {
+      throw new Error("Unable to query dishes.");
+    }
 
     let dishes: string[] = dishesQuery["dishes"];
     const ingredients: string[] = dishesQuery["ingredients"];
