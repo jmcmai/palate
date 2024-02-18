@@ -5,6 +5,8 @@ import { api } from "../convex/_generated/api";
 import useStoreUserEffect from "../useStoreUserEffect";
 
 import LikedIngredients from "../components/LikedIngredients";
+import DislikedIngredients from "../components/DislikedIngredients";
+
 import './Recipes.css'
 
 const Recipes: React.FC = () => {
@@ -13,6 +15,7 @@ const Recipes: React.FC = () => {
     <Template>
       <div>{userId}</div>
       <LikedIngredients/>
+      <DislikedIngredients/>
     </Template>
   );
 };

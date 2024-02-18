@@ -64,7 +64,6 @@ export const getUser = query({
 
 
 export const retrieveUserData = query({
-  args: { field: v.string() },
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
