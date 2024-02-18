@@ -87,7 +87,7 @@ export const extractData = internalAction({
   },
 });
 
-export const respond = internalAction({
+export const respond = action({
   args: { userID: v.id("users"), recipe: v.any() },
   handler: async (ctx, args) => {
     // model system call and add to user's message history
