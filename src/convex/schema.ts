@@ -37,7 +37,7 @@ export default defineSchema({
     date: v.string(),
     host: v.id("users"),
     participants: v.array(v.id("users")),
-    userRecipe: v.array(v.object({user_id: v.id("user"), recipe_id: v.id("recipe")}))
+    recipes: v.array(v.id("recipes")),
   }),
   recipes: defineTable ({
     name: v.string(),
