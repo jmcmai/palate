@@ -1,4 +1,7 @@
 import { mutation } from "./_generated/server";
+import { action, query } from "./_generated/server";
+import { internal } from "../convex/_generated/api";
+import { v } from "convex/values";
 
 /**
  * Insert or update the user in a Convex table then return the document's ID.
@@ -36,6 +39,24 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
+      friends: [],
+      liked_ingredients: [],
+      disliked_ingredients: [],
+      restrictions: [],
+      events: [],
+      recipes: {
+        liked: [],
+        disliked: [],
+      },
+      pinned: [],
     });
+  },
+});
+
+export const getUser = query({
+  args: { id: v.string() },
+  handler: async (ctx) => {
+    const user = await ctx.db.query("users").collect();
+    return user[0];
   },
 });
