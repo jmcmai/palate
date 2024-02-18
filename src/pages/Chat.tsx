@@ -4,6 +4,7 @@ import "./Chat.css";
 import { useAction, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { Id } from "../convex/_generated/dataModel";
+import useStoreUserEffect from "../useStoreUserEffect";
 
 interface Message {
   role: string;
@@ -11,11 +12,11 @@ interface Message {
 }
 
 const Chat = () => {
+  const userId = useStoreUserEffect();
   const user = useQuery(api.users.retrieveUserData);
   const sendToBot = useAction(api.messages.send);
   const answerFromBot = useAction(api.serve.answer);
 
-  const userIdRef = useRef<Id<"users"> | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>("");
   const chatHistoryRef = useRef<HTMLDivElement>(null);
@@ -23,7 +24,6 @@ const Chat = () => {
   useEffect(() => {
     if (user) {
       setMessages(user.messageHistory);
-      userIdRef.current = user._id;
     }
   }, [user]);
 
@@ -31,12 +31,16 @@ const Chat = () => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
+    if (!userId) {
+      return;
+    }
+
     // Add user message
-    sendToBot({ role: "user", content: inputText, userID: userIdRef.current! });
+    sendToBot({ role: "user", content: inputText, userID: userId! });
     setInputText("");
 
     // Await reply from chatbot
-    const reply = await answerFromBot({ userID: userIdRef.current! });
+    const reply = await answerFromBot({ userID: userId! });
     console.log(reply);
   };
 
