@@ -39,6 +39,7 @@ export const store = mutation({
     return await ctx.db.insert("users", {
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
+      cuisines: [],
       friends: [],
       likedIngredients: [],
       dislikedIngredients: [],
@@ -64,7 +65,6 @@ export const getUser = query({
 
 
 export const retrieveUserData = query({
-  
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -142,6 +142,68 @@ export const removeFriend = mutation({
     if (index !== -1) {
       updatedFriendsList.splice(index, 1);
       await ctx.db.patch(user._id, { friends: updatedFriendsList });
+    }
+
+    return true;
+  },
+});
+
+
+export const addCuisine = mutation({
+  args: { cuisine: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedCuisines = user.cuisines;
+    if (!updatedCuisines.includes(args.cuisine)) {
+      updatedCuisines.push(args.cuisine);
+      await ctx.db.patch(user._id, { cuisines: updatedCuisines });
+    }
+
+    return true;
+  },
+});
+
+
+export const removeCuisine = mutation({
+  args: { cuisine: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+
+    let updatedCuisines = user.cuisines;
+
+    const index = updatedCuisines.indexOf(args.cuisine);
+    if (index !== -1) {
+      updatedCuisines.splice(index, 1);
+      await ctx.db.patch(user._id, { cuisines: updatedCuisines });
     }
 
     return true;
