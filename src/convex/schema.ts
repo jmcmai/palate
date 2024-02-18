@@ -6,15 +6,13 @@ export default defineSchema({
     name: v.string(),
     tokenIdentifier: v.string(),
     friends: v.array(v.string()),
-    liked_ingredients: v.array(v.string()),
-    disliked_ingredients: v.array(v.string()),
+    likedIngredients: v.array(v.string()),
+    dislikedIngredients: v.array(v.string()),
     restrictions: v.array(v.string()),
     events: v.array(v.id("events")),
-    recipes: v.object({
-      liked: v.array(v.string()),
-      disliked: v.array(v.string()),
-    }),
-    pinned: v.array(v.string()),
+    recipes: v.array(v.id("recipes")),
+    pinned: v.array(v.id("recipes")),
+    messageHistory: v.array(v.object({ role: v.string(), content: v.string() }))
   }).index("by_token", ["tokenIdentifier"]),
   messages: defineTable({
     body: v.string(),
@@ -44,5 +42,8 @@ export default defineSchema({
   events: defineTable ({
     name: v.string(),
     friends: v.array(v.id("users"))
+  }),
+  recipes: defineTable ({
+    liked: v.boolean(),
   })
 });
