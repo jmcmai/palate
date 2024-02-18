@@ -27,7 +27,7 @@ export const listDishes = query({
 
 
 export const getIngredients = internalQuery({
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const dishes = await ctx.db
     .query("dishes")
     .collect()
@@ -37,7 +37,7 @@ export const getIngredients = internalQuery({
     for (let i = 0; i < ingredientsList.length; i++) {
       let row: string[] = ingredientsList[i].split(",");
       for (let j = 0; j < row.length; j++) {
-        ingredientsSet.add (row[j]);
+        ingredientsSet.add(row[j]);
       }
     }
 
@@ -87,7 +87,34 @@ export const matchedIngredients = action({
     ingredients: v.array(v.string()),
   },
   handler: async (ctx, args) => {
-    let allIngredients = await ctx.runQuery(internal.dishes.getIngredients, {});
+
+    function levenshteinDistance(a: string, b: string): number {
+      let distances = new Array(a.length + 1);
+      for (let i = 0; i <= a.length; i++) {
+          distances[i] = new Array(b.length + 1);
+      }
+    
+      for (let i = 0; i <= a.length; i++) {
+          distances[i][0] = i;
+      }
+      for (let j = 0; j <= b.length; j++) {
+          distances[0][j] = j;
+      }
+    
+      for (let i = 1; i <= a.length; i++) {
+          for (let j = 1; j <= b.length; j++) {
+              if (a[i - 1] === b[j - 1]) {
+                  distances[i][j] = distances[i - 1][j - 1];
+              } else {
+                  distances[i][j] = Math.min(distances[i - 1][j], distances[i][j - 1], distances[i - 1][j - 1]) + 1;
+              }
+          }
+      }
+    
+      return distances[a.length][b.length];
+    }
+
+    let allIngredients = await ctx.runQuery(internal.dishes.getIngredients);
 
     let matchedIngredients: string[] = [];
     for (let i = 0; i < args.ingredients.length; i++) {
@@ -104,7 +131,8 @@ export const matchedIngredients = action({
       }
 
       for (let j = 0; j < allIngredients.ingredientsB.length; j++) {
-        let dist: number = levenshteinDistance(args.ingredients[i], allIngredients.ingredientsB[j]);
+        const dist: number = levenshteinDistance(args.ingredients[i], allIngredients.ingredientsB[j]);
+
         if (dist < leastDist) {
           bestMatch = allIngredients.ingredientsB[j];
           leastDist = dist;
@@ -115,32 +143,4 @@ export const matchedIngredients = action({
 
     return matchedIngredients;
   },
-
 });
-
-
-function levenshteinDistance(a: string, b: string): number {
-  let distances = new Array(a.length + 1);
-  for (let i = 0; i <= a.length; i++) {
-      distances[i] = new Array(b.length + 1);
-  }
-
-  for (let i = 0; i <= a.length; i++) {
-      distances[i][0] = i;
-  }
-  for (let j = 0; j <= b.length; j++) {
-      distances[0][j] = j;
-  }
-
-  for (let i = 1; i <= a.length; i++) {
-      for (let j = 1; j <= b.length; j++) {
-          if (a[i - 1] === b[j - 1]) {
-              distances[i][j] = distances[i - 1][j - 1];
-          } else {
-              distances[i][j] = Math.min(distances[i - 1][j], distances[i][j - 1], distances[i - 1][j - 1]) + 1;
-          }
-      }
-  }
-
-  return distances[a.length][b.length];
-}
