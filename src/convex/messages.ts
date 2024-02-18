@@ -1,0 +1,20 @@
+import { query, action } from "./_generated/server";
+import { api } from "./_generated/api";
+import { v } from "convex/values";
+
+export const send = action({
+  args: { userID: v.id("users"), role: v.string(), content: v.string() },
+  handler: async (ctx, args) => {
+    // Save a new message to the chat history
+    await ctx.runMutation( api.users.addMessage, {
+      id: args.userID,
+      role: args.role,
+      content: args.content,
+    });
+    
+    // schedule chatbot to respond after insert
+    await ctx.scheduler.runAfter(0, api.together.answer, {
+      userID: args.userID
+    })
+  },
+});
