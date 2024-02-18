@@ -5,6 +5,7 @@ export default defineSchema({
   users: defineTable({
     name: v.string(),
     tokenIdentifier: v.string(),
+    email: v.optional(v.string()),
     cuisines: v.array(v.string()),
     friends: v.array(v.string()),
     likedIngredients: v.array(v.string()),
