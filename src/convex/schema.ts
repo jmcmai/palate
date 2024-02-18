@@ -1,7 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
-
 export default defineSchema({
   users: defineTable({
     name: v.string(),
@@ -14,38 +13,38 @@ export default defineSchema({
     events: v.array(v.id("events")),
     recipes: v.array(v.id("recipes")),
     pinned: v.array(v.id("recipes")),
-    messageHistory: v.array(v.object({ role: v.string(), content: v.string() }))
+    messageHistory: v.array(v.object({ role: v.string(), content: v.string() })),
   }).index("by_token", ["tokenIdentifier"]),
   apiResponses: defineTable({
     response: v.string(),
     botID: v.string(),
-    function: v.string()
+    function: v.string(),
   }),
   dishes: defineTable({
     name: v.string(),
     ingredients: v.string(),
-    cuisine: v.string()
+    cuisine: v.string(),
   })
-  .searchIndex("search_ingredients", {
-    searchField: "ingredients",
-    filterFields: ["cuisine"], })
-  .searchIndex("search_dishes", {
-    searchField: "name",
-  }),
-  events: defineTable ({
+    .searchIndex("search_ingredients", {
+      searchField: "ingredients",
+      filterFields: ["cuisine"],
+    })
+    .searchIndex("search_dishes", {
+      searchField: "name",
+    }),
+  events: defineTable({
     name: v.string(),
     date: v.string(),
     host: v.id("users"),
     participants: v.array(v.id("users")),
-    userRecipe: v.array(v.object({user_id: v.id("user"), recipe_id: v.id("recipe")}))
+    userRecipe: v.array(v.object({ user_id: v.id("user"), recipe_id: v.id("recipe") })),
   }),
-  recipes: defineTable ({
+  recipes: defineTable({
     name: v.string(),
     liked: v.number(),
     image: v.optional(v.string()),
     ingredients: v.optional(v.array(v.string())),
     totalTime: v.optional(v.string()),
-    url: v.optional(v.string())
-  })
-  .index("byLiked", ["liked"])
+    url: v.optional(v.string()),
+  }).index("byLiked", ["liked"]),
 });
