@@ -40,15 +40,15 @@ export const store = mutation({
       name: identity.name!,
       tokenIdentifier: identity.tokenIdentifier,
       friends: [],
-      liked_ingredients: [],
-      disliked_ingredients: [],
+      likedIngredients: [],
+      dislikedIngredients: [],
       restrictions: [],
       events: [],
-      recipes: {
-        liked: [],
-        disliked: [],
-      },
+      recipes: [],
       pinned: [],
+      messageHistory: [{ content: "You are an assistant that loves cooking and can access external functions. " + 
+      "The responses from these function calls will be appended to this dialogue. " +
+      "Please provide responses based on the information from these function calls.", role: "system" }]
     });
   },
 });
@@ -144,10 +144,10 @@ export const addLikedIngredient = mutation({
       return false;
     }
 
-    let updatedLikedIngredients = user.liked_ingredients;
+    let updatedLikedIngredients = user.likedIngredients;
     if (!updatedLikedIngredients.includes(args.ingredient)) {
       updatedLikedIngredients.push(args.ingredient);
-      await ctx.db.patch(user._id, { liked_ingredients: updatedLikedIngredients });
+      await ctx.db.patch(user._id, { likedIngredients: updatedLikedIngredients });
     }
 
     return true;
@@ -174,12 +174,12 @@ export const removeLikedIngredient = mutation({
       return false;
     }
 
-    let updatedLikedIngredients = user.liked_ingredients;
+    let updatedLikedIngredients = user.likedIngredients;
 
     const index = updatedLikedIngredients.indexOf(args.ingredient);
     if (index !== -1) {
       updatedLikedIngredients.splice(index, 1);
-      await ctx.db.patch(user._id, { liked_ingredients: updatedLikedIngredients });
+      await ctx.db.patch(user._id, { likedIngredients: updatedLikedIngredients });
     }
 
     return true;
@@ -206,10 +206,10 @@ export const addDislikedIngredient = mutation({
       return false;
     }
 
-    let updatedDislikedIngredients = user.disliked_ingredients;
+    let updatedDislikedIngredients = user.dislikedIngredients;
     if (!updatedDislikedIngredients.includes(args.ingredient)) {
       updatedDislikedIngredients.push(args.ingredient);
-      await ctx.db.patch(user._id, { disliked_ingredients: updatedDislikedIngredients });
+      await ctx.db.patch(user._id, { dislikedIngredients: updatedDislikedIngredients });
     }
 
     return true;
@@ -236,12 +236,12 @@ export const removeDislikedIngredient = mutation({
       return false;
     }
 
-    let updatedDislikedIngredients = user.disliked_ingredients;
+    let updatedDislikedIngredients = user.dislikedIngredients;
 
     const index = updatedDislikedIngredients.indexOf(args.ingredient);
     if (index !== -1) {
       updatedDislikedIngredients.splice(index, 1);
-      await ctx.db.patch(user._id, { disliked_ingredients: updatedDislikedIngredients });
+      await ctx.db.patch(user._id, { dislikedIngredients: updatedDislikedIngredients });
     }
 
     return true;
@@ -312,7 +312,7 @@ export const removeRestriction = mutation({
 
 
 export const addEvent = mutation({
-  args: { event_id: v.id("events") },
+  args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -331,8 +331,8 @@ export const addEvent = mutation({
     }
 
     let updatedEvents = user.events;
-    if (!updatedEvents.includes(args.event_id)) {
-      updatedEvents.push(args.event_id);
+    if (!updatedEvents.includes(args.eventId)) {
+      updatedEvents.push(args.eventId);
       await ctx.db.patch(user._id, { events: updatedEvents });
     }
 
@@ -342,7 +342,7 @@ export const addEvent = mutation({
 
 
 export const removeEvents = mutation({
-  args: { event_id: v.id("events") },
+  args: { eventId: v.id("events") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
@@ -362,7 +362,7 @@ export const removeEvents = mutation({
 
     let updatedEvents = user.events;
 
-    const index = updatedEvents.indexOf(args.event_id);
+    const index = updatedEvents.indexOf(args.eventId);
     if (index !== -1) {
       updatedEvents.splice(index, 1);
       await ctx.db.patch(user._id, { events: updatedEvents });
@@ -371,3 +371,46 @@ export const removeEvents = mutation({
     return true;
   },
 });
+
+
+export const addMessage = mutation({
+  args: { id: v.id("users"), role: v.string(), content: v.string() },
+  handler: async (ctx, args) => {
+    /*
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Called storeUser without authentication present");
+    }
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_token", (q) =>
+        q.eq("tokenIdentifier", identity.tokenIdentifier)
+      )
+      .unique();
+    
+    if (user === null) {
+      return false;
+    }
+    */
+
+    const id = args.id;
+    const user = await ctx.db.get(id);
+
+    if (user === null) {
+      return false;
+    }
+
+    const msg: { role: string; content: string; } = {
+      role: args.role,
+      content: args.content
+    }
+
+    let updatedMsgs = user.messageHistory;
+    updatedMsgs.push(msg);
+    await ctx.db.patch(user._id, { messageHistory: updatedMsgs });
+
+    return true;
+  },
+});
+
