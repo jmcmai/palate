@@ -144,6 +144,14 @@ export const addRecommendations = mutation({
   },
 });
 
+export const getRecommendation = query({
+  args: { id: v.id("events") },
+  handler: async (ctx, args) => {
+    const event = await ctx.db.get(args.id);
+    return Promise.all((event?.recipes ?? []).map((recipeId) => ctx.db.get(recipeId)));
+  },
+});
+
 export const syncPalate = action({
   args: { id: v.id("events") },
   handler: async (ctx, args) => {

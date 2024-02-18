@@ -178,6 +178,11 @@
     justify-content: center; /* Center horizontally */
     align-items: center; 
   }
+
+  .y-overflow p {
+    white-space: wrap;
+    overflow: visible;
+  }
   
   .modal-content {
     background-color: #fefefe;
@@ -186,9 +191,22 @@
     padding: 20px;
     padding-bottom: 50px;
     border: 1px solid #888;
-    width: 30%;
+    width: 40%;
     border-radius: 5px;
     position: relative;
+  }
+
+  @media screen and (max-width: 1600px) {
+    .modal-content {
+      margin-top: 4vh;
+      width: 80%;
+    }
+    .modal-content p {
+      font-size: calc(10px + 0.4vw);
+    }
+    .modal-content img {
+      max-width: 200px;
+    }
   }
   
   .modal-content .close {
@@ -228,4 +246,14 @@
   .no-recipes {
     width: 100%;
     padding: 0;
+  }
+  
+  .user-experience {
+    margin: 20px 0px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .lil-margin {
+    margin-bottom: 20px;
   }

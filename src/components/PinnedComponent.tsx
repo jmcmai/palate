@@ -23,7 +23,7 @@ interface PinnedComponentProps {
 const PinnedComponent: React.FC<PinnedComponentProps> = ({ recipe }) => {
     const [showModal, setShowModal] = useState(false);
     const user = useQuery(api.users.retrieveUserData);
-    const userLikedIngredients: string[] = user ? user.likedIngredients : [];
+    const userPantry: string[] = user ? user.pantry : [];
   
     const removePinned = useMutation(api.users.removePinned);
     const addRecipe = useMutation(api.users.addRecipe);
@@ -59,11 +59,10 @@ const PinnedComponent: React.FC<PinnedComponentProps> = ({ recipe }) => {
     };
   
     const isLikedIngredient = (ingredient: string) => {
-      return userLikedIngredients.some(
-        (likedIngredient: string) =>
+        return userPantry.some((likedIngredient: string) =>
           likedIngredient.toLowerCase() === ingredient.toLowerCase()
-      );
-    };
+        );
+      };
   
     return (
       <div
@@ -96,33 +95,32 @@ const PinnedComponent: React.FC<PinnedComponentProps> = ({ recipe }) => {
               {recipe.image && <img src={recipe.image} alt={recipe.name} />}
               <p>Cook Time: {recipe.totalTime} minutes</p>
               <p>Ingredients:</p>
-              <ul>
-                {recipe.ingredients.map((ingredient, index) => (
-                  <li
-                    key={index}
-                    style={{
-                      color: isLikedIngredient(ingredient) ? "green" : "inherit",
-                    }}
-                  >
-                    {ingredient}
-                  </li>
-                ))}
-              </ul>
+              <div className="y-overflow">
+              <p>Ingredients: {recipe.ingredients.map((ingredient, index) => (
+                <span key={index} style={{ color: isLikedIngredient(ingredient) ? 'green' : 'inherit' }}>
+                  {ingredient}{index !== recipe.ingredients.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+              </p>
+            </div>
               <button
-                className="input-button"
+                className="input-button lil-margin"
                 onClick={() => window.open(recipe.url, "_blank", "noopener noreferrer")}
               >
                 <FontAwesomeIcon icon={faLink} /> Recipe URL
               </button>
-              <button className="input-button" onClick={handleThumbsUp}>
-                Thumbs Up
-              </button>
-              <button className="input-button" onClick={handleThumbsDown}>
-                Thumbs Down
-              </button>
-              <button className="input-button" onClick={handleCooked}>
-                Cooked?
-              </button>
+              <p>Rating</p>
+              <div className="user-experience">
+                <button className="input-button" onClick={handleThumbsUp}>
+                    <FontAwesomeIcon icon={faThumbsUp} /> Good Recipe
+                </button>
+                <button className="input-button" onClick={handleThumbsDown}>
+                    <FontAwesomeIcon icon={faThumbsDown} /> Bad Recipe
+                </button>
+              </div>
+                <button className="input-button" onClick={handleCooked}>
+                    Cooked? Unpin this recipe.
+                </button>
             </div>
           </div>
         )}
